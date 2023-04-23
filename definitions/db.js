@@ -1,1 +1,0 @@
-// require('dbms').init(CONF.database, ERROR('DBMS'));

@@ -1,5 +1,6 @@
-name                       : jComponent
-database                   : YOUR-CONNECTION-STRING
+name                     : Sedmiboj
 
-// Total.js API services:
-// totalapi                   : YOUR TOKEN
+cookie        (generate) : 6
+cookie_secret (generate) : 10
+
+default_port             : 5001

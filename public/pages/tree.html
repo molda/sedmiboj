@@ -1,0 +1,283 @@
+<style>
+    .column { width: 20%; }
+</style>
+
+<div data-scope="~PATH~" class="px-4 h-full w-full">
+    <div class="flex space-between justify-center align-center">
+        <h2 data-bind="common.categories.~PATH~__text"></h2>
+        <button class="btn btn-primary" onclick="EXEC('~PATH~/reload', true)"><i class="fa fa-refresh"></i></button>
+    </div>
+       
+    <div data-bind="common.teams__show:value && value.length === 32" class="hidden flex">
+        <div data-bind="common.matches.~PATH~__template" class="flex flex-column column">
+            <script type="text/html">
+                {{ foreach match in value }}
+                    {{ if match.round === 1 }}
+                    <div class="flex mx-2">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}" data-index="{{ $index }}">
+                            <div class="flex flex-column w-full">
+                                <div class="flex space-between align-center">
+                                    <div class="{{ if match.winner !== match.team1 }}font-sm{{ fi }}">{{ match.team1 | player_names }}</div>
+                                    <div>{{ if match.winner === match.team1 }}<i class="far fa-check"></i>{{ fi }}</div>
+                                </div>
+                                <div class="flex space-between align-center">
+                                    <div class="{{ if match.winner !== match.team2 }}font-sm{{ fi }}">{{ match.team2 | player_names }}</div>
+                                    <div>{{ if match.winner === match.team2 }}<i class="far fa-check"></i>{{ fi }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ fi }}
+                {{ end }}
+            </script>
+        </div>
+        <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around">
+            <script type="text/html">
+                {{ foreach match in value }}
+                    {{ if match.round === 2 }}
+                    <div class="flex mx-2">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}" data-index="{{ $index }}">
+                            <div class="flex flex-column w-full">
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team1 | player_names }}</div>
+                                    <div>{{ match.score[0] }}</div>
+                                </div>
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team2 | player_names }}</div>
+                                    <div>{{ match.score[1] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ fi }}
+                {{ end }}
+            </script>
+        </div>
+        <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around">
+            <script type="text/html">
+                {{ foreach match in value }}
+                    {{ if match.round === 3 }}
+                    <div class="flex mx-2">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}" data-index="{{ $index }}">
+                            <div class="flex flex-column w-full">
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team1 | player_names }}</div>
+                                    <div>{{ match.score[0] }}</div>
+                                </div>
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team2 | player_names }}</div>
+                                    <div>{{ match.score[1] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ fi }}
+                {{ end }}
+            </script>
+        </div>
+        <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around">
+            <script type="text/html">
+                {{ foreach match in value }}
+                    {{ if match.round === 4 }}
+                    <div class="flex mx-2">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}"  data-index="{{ $index }}">
+                            <div class="flex flex-column w-full">
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team1 | player_names }}</div>
+                                    <div>{{ match.score[0] }}</div>
+                                </div>
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team2 | player_names }}</div>
+                                    <div>{{ match.score[1] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ fi }}
+                {{ end }}
+            </script>
+        </div>
+        <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around">
+            <div class="flex mx-2">
+                <script type="text/html">
+                {{ foreach match in value }}
+                    {{ if match.round === 5 }}
+                    <div class="flex mx-2">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}"  data-index="{{ $index }}">
+                            <div class="flex flex-column w-full">
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team1 | player_names }}</div>
+                                    <div>{{ match.score[0] }}</div>
+                                </div>
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm">{{ match.team2 | player_names }}</div>
+                                    <div>{{ match.score[1] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ fi }}
+                {{ end }}
+                </script>
+            </div>
+        </div>
+    </div>
+    <div data-bind="common.teams__show:!value || value.length < 32" class="hidden">
+        <h2>Nejprve je potřeba vyplnit všech 32 dvojic</h2>
+    </div>
+
+    <div class="floatingbox" data-id="match-~PATH~" style="width:250px">
+        <div class="px-4 py-2">
+            <div class="mb-4 flex space-between"><span class="b" data-bind="matchform__text:console.log(value); 'Zápas: ' + value.match"></span><i class="fa fa-times pointer red" onclick="EXEC('~PATH~/closebox')"></i></div>
+            <!--<div class="flex align-center mb-2">
+                <div class="w-14">Tým 1</div>
+                <div data---="input__matchform.score[0]__type:number"></div>
+            </div>
+            <div class="flex align-center mb-2">
+                <div class="w-14">Tým 2</div>
+                <div data---="input__matchform.score[1]__type:number"></div>
+            </div>-->
+            <button class="btn btn-primary btn-small btn-block exec mb-2" data-bind="matchform__text:value&&'Vítěz '+Thelpers.teamname(value.team1)__.btn-primary:!value||!value.winner||value.winner===value.team1__.btn-secondary:value&&value.winner===value.team2" data-exec="~PATH~/winner_team1"></button>
+            <button class="btn btn-primary btn-small btn-block exec mb-2" data-bind="matchform__text:value&&'Vítěz '+Thelpers.teamname(value.team2)__.btn-primary:!value||!value.winner||value.winner===value.team2__.btn-secondary:value&&value.winner===value.team1" data-exec="~PATH~/winner_team2"></button>
+
+            <button class="btn btn-secondary btn-small btn-block exec mb-2" data-exec="~PATH~/startmatch" data-bind="matchform__hide:value => (value&&value.closed)||(common.matches.~PATH~ || []).some(m => m.active)">Zahájit zápas</button>
+            <div data---="input__matchform.autostart__type:checkbox" data-bind="matchform.active__show" class="mb-2">Zahájit další zápas</div>
+
+            <!--<button class="btn btn-primary btn-small btn-block exec mb-2" data-bind="matchform.active__show" data-exec="~PATH~/closesave">Uložit a ukončit zápas</button>
+            <button class="btn btn-secondary btn-small btn-block exec hidden" data-exec="~PATH~/save" data-bind="matchform__show:value&&(value.active||value.closed)">Uložit</button>-->
+        </div>
+    </div>
+</div>
+
+<script>
+    PLUGIN('~PATH~', function(exports){
+        var matchid;
+        loaded = false;
+
+        exports.reload = function(force) {
+            //if (loaded && force !== true)
+            //    return;
+            SET('common.~PATH~.matches', []);
+            SETTER(true, 'loading/show');
+            //loaded = true;
+            AJAX('GET /api/matches/?category=~PATH~', function(val, err, res){
+                SET('common.matches.~PATH~', val);
+                SETTER('loading/hide', 500);
+            });
+        };
+
+        exports.edit = function(el) {
+            matchid = el.attrd('match');
+            var index = +el.attrd('index');
+            var matches = GET('common.matches.~PATH~');
+            var match = matches.findItem(match => match.id === matchid);
+            var active = matches.some(m => m.active);
+            if (!match.closed && !match.active && active)
+                return SETTER(true, 'notify/warning', 'Nejdříve ukončeta aktuální zápas.');
+            SET('matchform', match);
+            var opt = {};
+            opt.element = el;
+            opt.id = 'match-~PATH~';
+            opt.align = 'left';
+            if (index > 12 && index < 16)
+                opt.offsetY = -200;
+            SETTER('floatingbox/show', opt);
+        };
+
+        exports.stop = function() {
+            var match = GET('matchform');
+            match.active = false;
+            AJAX('POST /api/matches/', match, function(val, err, res){
+                exports.reload(true);
+                SETTER('floatingbox/hide', 'match-~PATH~');
+                SETTER('loading/hide', 500);
+            });
+        };
+
+        exports.startmatch = function() {
+            var active = (GET('common.matches.~PATH~') || []).findItem(match => match.active);
+            if (active)
+                return SETTER(true, 'notify/warning', 'Nejdříve ukončeta aktuální zápas.');
+            var match = GET('matchform');
+            match.active = true;
+            AJAX('POST /api/matches/', match, function(val, err, res){
+                exports.reload(true);
+                SETTER('floatingbox/hide', 'match-~PATH~');
+                SETTER('loading/hide', 500);
+            });
+        };
+
+        exports.winner_team1 = function() {
+            var match = GET('matchform');
+            match.winner = match.team1;
+            match.active = false;
+            match.score = [1, 0];
+            match.closed = true;
+            savematch(match);
+        };
+
+        exports.winner_team2 = function() {
+            var match = GET('matchform');
+            match.winner = match.team2;
+            match.active = false;
+            match.score = [0, 1];
+            match.closed = true;
+            savematch(match);
+        };
+
+        function savematch(match) {
+            AJAX('POST /api/matches/', match, function(val, err, res){
+                if (match.autostart)
+                    exports.start(match.category, nextmatch(match.id), () => exports.reload(true));
+                else
+                    exports.reload(true);
+                SETTER('floatingbox/hide', 'match-~PATH~');
+                SETTER('loading/hide', 500);
+            });   
+        };
+
+        exports.closesave = () => exports.save(true);
+
+        exports.save = function(close) {
+            SETTER(true, 'loading/show');
+            var match = GET('matchform');
+            if (close === true) {
+                match.active = false;
+                match.closed = true;
+            }
+            console.log(match);
+            AJAX('POST /api/matches/', match, function(val, err, res){
+                if (match.autostart)
+                    exports.start(match.category, nextmatch(match.id), () => exports.reload(true));
+                else
+                    exports.reload(true);
+                SETTER('floatingbox/hide', 'match-~PATH~');
+                SETTER('loading/hide', 500);
+            });
+
+            if (match % 2 === 1) {
+                var prev = match - 1;
+                if (prev > -1 && match < 31) {}
+            }
+        };
+
+        exports.closebox = function() {
+            SETTER('floatingbox/hide', 'match-~PATH~');
+        };
+
+        exports.start = function(category, id, callback) {
+            var index = common.matches[category].findIndex(m => m.id === id);
+            var match = common.matches[category][index];
+            match.active = true;
+            UPD(`common.matches.${category}[${index}]`);
+            AJAX('POST /api/matches/', match, function(val, err, res){
+                callback && callback();
+            });
+        };
+
+        const nextmatch = (match) => {
+            var id = +match.substring(5);
+            return `match${++id}`;
+        };
+    });
+</script>

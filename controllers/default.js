@@ -1,3 +1,4 @@
 exports.install = function() {
-	ROUTE('/*');
+	ROUTE('+GET /*');
+	ROUTE('GET /login/');
 };

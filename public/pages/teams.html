@@ -1,0 +1,72 @@
+<div class="px-4" data-scope="teams">
+    <div class="flex space-between align-center mb-4 mt-4">
+        <button class="btn btn-primary btn-large exec b" data-exec="?/init" data-bind="common.teams__show:value&&value.length===32&&!common.meta.init">LOSOVAT</button>
+    </div>
+    <div>
+        <div class="grid grid-col-4 gap" data-bind="common.teams__template">
+            <script type="text/html">
+                {{ foreach team in value }}
+                <div>
+                    <div class="shadow bg-primary p-4 radius pointer mb-4" onclick="EXEC('teams/edit', {{ $index }})">
+                        <div class="flex space-between">
+                            <div class="b" data-bind="common.teams[{{ $index }}]__text:value.name || (value.player1 + ' ' + value.player2)"></div>
+                            <div class="mb-4 text-gray">Pořadové číslo:<span data-bind="common.teams[{{ $index }}].number__text"></span></div>
+                        </div>
+                        <div class="flex flex-column">
+                            <div data-bind="common.teams[{{ $index }}].player1__text"></div>
+                            <div data-bind="common.teams[{{ $index }}].player2__text"></div>
+                        </div>
+                    </div>
+                </div>
+                {{ end }}
+                {{ if value.length < 32 }}
+                <div class="pointer">
+                    <div class="bg-primary-inverted p-6 radius text-black-inverted" onclick="EXEC('teams/add')">
+                        <i class="fa fa-plus-circle mr-2"></i>Přidat dvojici
+                    </div>
+                </div>
+                {{ fi }}
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+    common.teams = [];
+
+    PLUGIN('teams', function(exports){
+        exports.reload = function() {
+            AJAX('GET /api/teams/', 'common.teams');
+        };
+
+        exports.add = function() {
+            console.log('ADD');
+            SET('teamform', { id: 'team' + common.teams.length, number: common.teams.length + 1, name: 'Team ' + (common.teams.length + 1), isnew: true });
+            SET('common.form', 'teamform');
+        };
+
+        exports.edit = function(index) {
+            console.log('EDIT');
+            var team = common.teams[+index];
+            SET('teamform', team);
+            SET('common.form', 'teamform');
+        };
+        
+        exports.init = function() {
+            SET('common.meta.init', true);
+            SETTER('loading/show');
+            AJAX('GET /api/matches/init', function(val, err, res){
+                if (!err) {
+                    EXEC('common/savemeta');
+                    SETTER('loading/hide');
+                    SETTER(true, 'notify/success', 'Slosování proběhlo úspěšně.');
+                    SET('common.page', 'matches');
+                } else {
+                    SETTER(true, 'notify/warning', 'Slosování selhalo. Zkuste to znovu.');
+                }
+            });
+        };
+        
+    });
+
+</script>

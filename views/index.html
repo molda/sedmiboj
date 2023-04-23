@@ -1,66 +1,190 @@
 @{layout('')}
-@{title('SPA example')}
 
 <!DOCTYPE html>
 <html>
 <head>
+	<title>@(Sedmiboj)</title>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=10" />
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="robots" content="all,follow" />
-	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" />
-	<script src="//cdn.componentator.com/spa.min@18.js"></script>
-	@{import('meta', 'head', 'default.css + ui.css', 'default.js + ui.js', 'favicon.ico')}
+	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@19pro.css" />
+	<script src="//cdn.componentator.com/spa.min@19.js"></script>
+	<script src="https://componentator.com/download.js?id=exec,loading,miniform,validate,importer"></script>
+	@{import('favicon.ico', 'default.js + user.js + helpers.js', 'default.css + components.css + utils.css')}
 </head>
+
 <body data---="exec">
-
-	<div data---="LAZY datepicker"></div>
+	<div data---="LAZY menu"></div>
 	<div data---="LAZY approve"></div>
-	<div data---="LAZY message__null__style:2"></div>
+	<div data---="LAZY message"></div>
+	<div data---="LAZY notify__null__position:top right"></div>
 	<div data---="loading" class="hidden"></div>
+	<div data---="directory__null__placeholder:Search..."></div>
+    <div data---="floatingbox__null__zindex:10"></div>
 
-	<div class="container">
+	<div class="h-full w-full flex flex-column">
+		<header class="flex space-between align-center border-bottom h-14">
+			<div class="p-4 b font-l">TJ Nahořany</div>
+			<div class="b font-l">Sedmiboj - <span data-bind="common.date__text"></span></div>
+			<div class="flex align-center">
+				<div class="bg-primary-inverted rounded mr10">
+					<i class="far fa-eclipse flex align-center justify-center h-8 w-8 text-primary-inverted" onclick="TOGGLE('common.dark')"></i>
+				</div>
+				<div class="bg-theme rounded mr10">
+					<div data-bind="user.UsrInitials__text" class="flex align-center justify-center h-8 w-8 text-white"></div>
+				</div>
+				<div class="mr-4">
+					<button class="exec btn btn-primary-outline" data-exec="common/logout"><i class="fas fa-power-off mr-2"></i>Odhlásit</button>
+				</div>
+			</div>
+		</header>
+		<div class="flex relative flex-grow main-body">
+			<div class="w-14 flex flex-column space-between" data---="selected__common.page__selector:.pointer">
+				<div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Dvojice" onclick="SET('common.page', 'teams');" data-if="teams">
+						<i class="fa fa-users"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Dvojice</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Vítězové" onclick="SET('common.page', 'winners');" data-if="winners">
+						<i class="fa fa-trophy"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Vítězové</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Probíhající zápasy" onclick="SET('common.page', 'matches');" data-if="matches">
+						<i class="fa fa-table"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Probíhající zápasy</div>
+					</div>
+				</div>
+				<div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Tenis" onclick="SET('common.page', 'tennis');" data-if="tennis">
+						<i class="text-tennis fa fa-racquet"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Tenis</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Pingpong" onclick="SET('common.page', 'pingpong');" data-if="pingpong">
+						<i class="text-pingpong fa fa-table-tennis"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Pingpong</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Fotbal" onclick="SET('common.page', 'football');" data-if="football">
+						<i class="text-football fa fa-futbol"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Fotbal</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Volejbal" onclick="SET('common.page', 'voleyball');" data-if="voleyball">
+						<i class="text-voleyball far fa-volleyball-ball"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Volejbal</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Basketbal" onclick="SET('common.page', 'basketball');" data-if="basketball">
+						<i class="text-basketball fa fa-basketball-ball"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Baskebal</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Házená" onclick="SET('common.page', 'handball');" data-if="handball">
+						<i class="text-handball fa fa-volleyball-ball"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Házená</div>
+					</div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Nohejbal" onclick="SET('common.page', 'netball');" data-if="netball">
+						<i class="text-netball far fa-futbol"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Nohejbal</div>
+					</div>
+				</div>
+				<div>
+					<div class="w-14 h-14 flex justify-center align-center hover-bg-accent pointer relative" title="Nastavení" onclick="SET('common.page', 'settings');" data-if="settings">
+						<i class="fa fa-gears"></i>
+						<div class="absolute p-2 radius z-10 l-15 bg-primary-inverted text-primary-inverted parent-hover_show">Nastavení</div>
+					</div>
+				</div>
+			</div>
+			<main class="bg-grey-light flex-grow">
+				<div data---="part__common.page__if:teams;url:/pages/teams.html;reload:teams/reload" class="main-page"></div>
+				<div data---="part__common.page__if:winners;url:/pages/winners.html;reload:winners/reload" class="main-page"></div>
+				<div data---="part__common.page__if:matches;url:/pages/matches.html;reload:matches/reload" class="main-page"></div>
 
-		<nav>
-			<a href="/" class="R">Dashboard</a>
-			<a href="/users/" class="R">Users</a>
-			<a href="/products/" class="R">Products</a>
-		</nav>
+				<div data---="part__common.page__if:tennis;url:/pages/tree.html;reload:tennis/reload" class="main-page"></div>
+				<div data---="part__common.page__if:pingpong;url:/pages/tree.html;reload:pingpong/reload" class="main-page"></div>
+				<div data---="part__common.page__if:football;url:/pages/tree.html;reload:football/reload" class="main-page"></div>
+				<div data---="part__common.page__if:voleyball;url:/pages/tree.html;reload:voleyball/reload" class="main-page"></div>
+				<div data---="part__common.page__if:basketball;url:/pages/tree.html;reload:basketball/reload" class="main-page"></div>
+				<div data---="part__common.page__if:handball;url:/pages/tree.html;reload:handball/reload" class="main-page"></div>
+				<div data---="part__common.page__if:netball;url:/pages/tree.html;reload:netball/reload" class="main-page"></div>
 
-		<div data---="part__common.page__if:dashboard;url:/pages/dashboard.html;reload:dashboard/refresh"></div>
-		<div data---="part__common.page__if:users;url:/pages/users.html;reload:users/refresh"></div>
-		<div data---="part__common.page__if:products;url:/pages/products.html;reload:products/refresh"></div>
-
+				<div data---="part__common.page__if:settings;url:/pages/settings.html;reload:settings/reload" class="main-page"></div>
+			</main>
+		</div>
 	</div>
+
+	<div data---="importer__common.form__if:matchform;url:/forms/match.html"></div>
+	<div data---="importer__common.form__if:teamform;url:/forms/team.html"></div>
 
 	<script>
 
+		var common = {};
+		common.autostart_next = true;
+		//setTimeout(() => SET('common.page', 'matches'), 1000);
+		common.date = new Date().format('dd.MM.yyyy');
+		common.year = NAV.query.year || new Date().getFullYear();
+		common.teams = [];
+
+		common.matches = {};
+		common.matches.tennis = [];
+		common.matches.pingpong = [];
+		common.matches.football = [];
+		common.matches.voleyball = [];
+		common.matches.basketball = [];
+		common.matches.handball = [];
+		common.matches.netball = [];
+
+		common.categories = {};
+		common.categories.tennis = 'Tenis';
+		common.categories.pingpong = 'Pingpong';
+		common.categories.football = 'Fotbal';
+		common.categories.voleyball = 'Volejbal';
+		common.categories.basketball = 'Basketbal';
+		common.categories.handball = 'Házená';
+		common.categories.netball = 'Nohejbal';
+
+		common.icons = { tennis: 'racquet', pingpong: 'table-tennis', football: 'futbol', voleyball: 'volleyball-ball', basketball: 'basketball-ball', handball: 'volleyball-ball', netball: 'futbol' };
+		common.colors = { tennis: 'darkred', pingpong: '#323232', football: 'forestgreen', voleyball: 'slateblue', basketball: '#a3a300', handball: 'burlywood', netball: 'chocolate' };
+
 		NAV.clientside('.R');
 
-		var common = {};
-
-		ON('@flag showloading', function() {
-			SETTER('loading/show');
+		WATCH('common.dark', (path, val) => {
+			$('body').tclass('ui-dark', val);
 		});
 
-		ON('@flag hideloading', function() {
-			SETTER('loading/hide', 1000);
+		CACHEPATH('common.dark', '1 year');
+
+		ON('ready', function() {
+			EXEC('common/loadmeta');
+			Object.keys(common.matches).forEach(c => {
+                AJAX('GET /api/matches?category=' + c, 'common.matches.' + c);
+            });
 		});
 
-		ROUTE('/', function() {
-			SET('common.page', 'dashboard');
-		});
+		PLUGIN('common', function(exports) {
 
-		ROUTE('/users/', function() {
-			SET('common.page', 'users');
-		});
+			exports.reload = function() {
 
-		ROUTE('/products/', function() {
-			SET('common.page', 'products');
+			};
+
+			exports.reload();
+
+			exports.loadmeta = function() {
+				AJAX('GET /api/meta', { year: common.year }, function(value, err, res){
+					SET('common.meta', value.data);
+					SET('common.page', 'teams');
+				});
+			};
+
+			exports.savemeta = function() {
+				AJAX('POST /api/meta', { year: common.year, data: common.meta }, function(value, err, res){
+
+				});
+			};
+
+			exports.logout = function() {
+				User.logout();
+			};
 		});
 
 	</script>
-
 </body>
 </html>

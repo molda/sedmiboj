@@ -1,0 +1,118 @@
+<style>
+    .width_7 { width: calc(100% / 7); }
+</style>
+
+<div class="px-4">
+    <div class="flex space-between align-center mb-4 mt-4">
+        <h2>Probíhající zápasy</h2>
+        <button class="btn btn-primary" onclick="TOGGLE('common.showclosed')"><i class="fa fa-eye mr-2"></i>Zobrazit/skrýt odehrané zápasy</button>
+    </div>
+    <div class="flex space-between">
+        <div class="flex flex-column width_7 bg-tennis mx radius" data-bind="common.matches.tennis__template:{#match_tmpl}"></div>
+        <div class="flex flex-column width_7 bg-pingpong mx radius" data-bind="common.matches.pingpong__template:{#match_tmpl}"></div>
+        <div class="flex flex-column width_7 bg-football mx radius" data-bind="common.matches.football__template:{#match_tmpl}"></div>
+        <div class="flex flex-column width_7 bg-voleyball mx radius" data-bind="common.matches.voleyball__template:{#match_tmpl}"></div>
+        <div class="flex flex-column width_7 bg-basketball mx radius" data-bind="common.matches.basketball__template:{#match_tmpl}"></div>
+        <div class="flex flex-column width_7 bg-handball mx radius" data-bind="common.matches.handball__template:{#match_tmpl}"></div>
+        <div class="flex flex-column width_7 bg-netball mx radius" data-bind="common.matches.netball__template:{#match_tmpl}"></div>
+    </div>
+</div>
+
+<div class="floatingbox" data-id="matches_match" style="width:200px">
+    <div class="padding">
+        <div class="mb-2 b">Body:</div>
+        <div class="flex align-center mb-2">
+            <div class="w-14">Tým 1</div>
+            <div data---="input__matchform.score[0]__type:number"></div>
+        </div>
+        <div class="flex align-center mb-2">
+            <div class="w-14">Tým 2</div>
+            <div data---="input__matchform.score[1]__type:number"></div>
+        </div>
+        <button class="btn btn-primary btn-small btn-block exec" data-exec="~PATH~/save">Uložit</button>
+    </div>
+</div>
+
+<template id="match_tmpl">
+    <div class="b p-2 text-white flex space-between align-center">
+        <div><i class="fa fa-{{ value[0].category | category_icon }} mr-2"></i>{{ value[0].category | category }}</div>
+        <div><span>Zbývá:&nbsp;</span><span data-bind="common.matches.{{ value[0].category }}__text:value => value&&value.filter(m => !m.closed).length"></span></div>
+    </div>
+    {{ foreach match in value}}   
+    <div class="p-2{{ if match.closed }} hidden" data-bind="common.showclosed__show{{ fi }}">
+        <div class="shadow bg-primary{{ if match.active }}-inverted text-black-inverted active-outline{{ fi }}{{ if match.closed }} bg-grey-light{{ fi }} p-4 radius pointer exec" data-exec="matches/edit" data-category="{{ match.category }}" data-id="{{ match.id }}">
+            <div class="flex space-between">
+                {{ if match.active }}
+                <div class="mb-2 b">Aktuální zápas: {{ match.match }}</div>
+                {{ else }}
+                <div class="mb-2 text-gray">Zápas číslo: {{ match.match }}</div>
+                {{ fi }}
+            </div>
+            <div class="flex space-between">
+                <div>{{ match.team1 | player_names }}</div>
+                <div>{{ match.score[0] }}</div>
+            </div>
+            <div class="flex space-between">
+                <div>{{ match.team2 | player_names }}</div>
+                <div>{{ match.score[1] }}</div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</template>
+<script>
+
+    PLUGIN('matches', function(exports){
+        exports.reload = function() {
+            Object.keys(common.matches).forEach(c => {
+                AJAX('GET /api/matches?category=' + c, 'common.matches.' + c);
+            });
+        };
+
+        //exports.reload();
+
+        exports.edit = function(el) {
+            var matchid = el.attrd('id');
+            var category = el.attrd('category');
+            var match = common.matches[category].findItem(m => m.id === matchid);
+            if (!match.team1)
+                return;
+            exports.match = match;
+            SET('matchform', match);
+            var opt = {};
+            opt.element = el;
+            opt.id = 'matches_match';
+            //opt.align = 'right';
+            SETTER('floatingbox/show', opt);
+        };
+
+        exports.save = function() {
+            var match = GET('matchform');
+            var is = match.active;
+            match.active = false;
+            match.closed = true;
+            AJAX('POST /api/matches/', match, function(val, err, res){
+                is && exports.start(match.category, nextmatch(match.id), () => exports.reload());
+                !is && exports.reload();
+                SETTER('floatingbox/hide');
+            });
+        };
+
+        exports.start = function(category, id, callback) {
+            var index = common.matches[category].findIndex(m => m.id === id);
+            var match = common.matches[category][index];
+            match.active = true;
+            UPD(`common.matches.${category}[${index}]`);
+            AJAX('POST /api/matches/', match, function(val, err, res){
+                callback && callback();
+            });
+        };
+
+        const nextmatch = (match) => {
+            var id = +match.substring(5);
+            return `match${++id}`;
+        };
+        
+    });
+
+</script>
