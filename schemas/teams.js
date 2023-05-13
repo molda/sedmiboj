@@ -10,7 +10,7 @@ NEWSCHEMA('Teams', function(schema) {
 	schema.setQuery(function($) {
 
         var year = $.query.year || new Date().getFullYear();
-		NOSQL('teams_' + year).find().callback((err, response, meta) => {
+		NOSQL('teams_' + year).find().sort('id').callback((err, response, meta) => {
             if (err)
                 $.invalid('error');
             else

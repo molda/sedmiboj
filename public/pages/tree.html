@@ -36,15 +36,15 @@
                 {{ foreach match in value }}
                     {{ if match.round === 2 }}
                     <div class="flex mx-2">
-                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}" data-index="{{ $index }}">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}" data-index="{{ $index }}">
                             <div class="flex flex-column w-full">
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team1 | player_names }}</div>
-                                    <div>{{ match.score[0] }}</div>
+                                    <div>{{ if match.winner === match.team1 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team2 | player_names }}</div>
-                                    <div>{{ match.score[1] }}</div>
+                                    <div>{{ if match.winner === match.team2 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                             </div>
                         </div>
@@ -58,15 +58,15 @@
                 {{ foreach match in value }}
                     {{ if match.round === 3 }}
                     <div class="flex mx-2">
-                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}" data-index="{{ $index }}">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}" data-index="{{ $index }}">
                             <div class="flex flex-column w-full">
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team1 | player_names }}</div>
-                                    <div>{{ match.score[0] }}</div>
+                                    <div>{{ if match.winner === match.team1 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team2 | player_names }}</div>
-                                    <div>{{ match.score[1] }}</div>
+                                    <div>{{ if match.winner === match.team2 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                             </div>
                         </div>
@@ -80,15 +80,15 @@
                 {{ foreach match in value }}
                     {{ if match.round === 4 }}
                     <div class="flex mx-2">
-                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}"  data-index="{{ $index }}">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}"  data-index="{{ $index }}">
                             <div class="flex flex-column w-full">
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team1 | player_names }}</div>
-                                    <div>{{ match.score[0] }}</div>
+                                    <div>{{ if match.winner === match.team1 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team2 | player_names }}</div>
-                                    <div>{{ match.score[1] }}</div>
+                                    <div>{{ if match.winner === match.team2 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                             </div>
                         </div>
@@ -103,15 +103,15 @@
                 {{ foreach match in value }}
                     {{ if match.round === 5 }}
                     <div class="flex mx-2">
-                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer mb-2 flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}"  data-index="{{ $index }}">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme active-outline{{ else }} bg-primary{{ fi }} p-2 radius pointer flex exec" data-exec="~PATH~/edit" data-match="{{ match.id }}"  data-index="{{ $index }}">
                             <div class="flex flex-column w-full">
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team1 | player_names }}</div>
-                                    <div>{{ match.score[0] }}</div>
+                                    <div>{{ if match.winner === match.team1 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                                 <div class="flex space-between align-center">
                                     <div class="font-sm">{{ match.team2 | player_names }}</div>
-                                    <div>{{ match.score[1] }}</div>
+                                    <div>{{ if match.winner === match.team2 }}<i class="far fa-check"></i>{{ fi }}</div>
                                 </div>
                             </div>
                         </div>
@@ -200,6 +200,7 @@
                 return SETTER(true, 'notify/warning', 'Nejdříve ukončeta aktuální zápas.');
             var match = GET('matchform');
             match.active = true;
+            SETTER('loading/show');
             AJAX('POST /api/matches/', match, function(val, err, res){
                 exports.reload(true);
                 SETTER('floatingbox/hide', 'match-~PATH~');
@@ -226,6 +227,7 @@
         };
 
         function savematch(match) {
+            SETTER('loading/show');
             AJAX('POST /api/matches/', match, function(val, err, res){
                 if (match.autostart)
                     exports.start(match.category, nextmatch(match.id), () => exports.reload(true));

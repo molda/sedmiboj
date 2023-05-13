@@ -20,6 +20,5 @@
 .btn.btn-block { width: 100%; justify-content: center; }
 
 
-
 .alert { position: relative; padding: 10px; margin-bottom: 10px; color: black; background-color: white; border: 1px solid grey; border-radius: var(--radius); }
 .alert-warning { color: #533e00; background-color: #ffc482; border-color: #ffb665; }

@@ -15,3 +15,5 @@ if (total === 'total.js') {
 		require(total + '/debug')(options);
 } else
 	require(total + '/' + type)(options);
+
+//setInterval(() => console.log('Intervaling'), 5000);

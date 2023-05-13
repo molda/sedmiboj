@@ -12,6 +12,7 @@
 .justify-end { justify-content: flex-end; }
 .space-between { justify-content: space-between; }
 .space-around { justify-content: space-around; }
+.space-evenly { justify-content: space-evenly; }
 .flex-grow { flex-grow: 1; }
 .absolute { position: absolute; }
 .relative { position: relative; }

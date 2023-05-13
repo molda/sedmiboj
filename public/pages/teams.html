@@ -12,9 +12,10 @@
                             <div class="b" data-bind="common.teams[{{ $index }}]__text:value.name || (value.player1 + ' ' + value.player2)"></div>
                             <div class="mb-4 text-gray">Pořadové číslo:<span data-bind="common.teams[{{ $index }}].number__text"></span></div>
                         </div>
-                        <div class="flex flex-column">
-                            <div data-bind="common.teams[{{ $index }}].player1__text"></div>
-                            <div data-bind="common.teams[{{ $index }}].player2__text"></div>
+                        <div class="flex justify-center">
+                            <div data-bind="common.teams[{{ $index }}].player1__text" class="mr-4"></div>
+                            <div>-</div>
+                            <div data-bind="common.teams[{{ $index }}].player2__text" class="ml-4"></div>
                         </div>
                     </div>
                 </div>

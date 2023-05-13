@@ -43,8 +43,10 @@ NEWSCHEMA('Matches', function(schema) {
 			console.log('UPDATED', err, response);
 			if (err)
 				$.invalid('error');
-			else
-				$.callback(response);
+			else {
+				$.model.closed && fillNewMatch(year, $.model.category, $.model.id);
+				setTimeout(() => $.callback(response), 2000);
+			}
 		});
 	});
 
@@ -69,6 +71,65 @@ NEWSCHEMA('Matches', function(schema) {
 	});
 
 });
+
+const matchPairs = {};
+for (let i = 1; i < 33; i++) // { 1: 2, 2: 1, .... }
+	matchPairs[i] = i % 2 === 0 ? i - 1 : i + 1;
+
+const fillNewMatch = (year, category, id) => {
+	var builder = NOSQL('matches_' + year).find();
+	builder.where('category', category);
+	builder.callback((err, matches) => {
+		if (err || !matches || !matches.length)
+			return console.log('[Schema:matches] failed at fillNewMatch');
+		var match = matches.find(m => m.id === id);
+		var nextmatchnum;
+		var winner, winner2;
+console.log('MATCH', match);
+console.log('OTHER', matchPairs[match.match]);
+		var othernum = matchPairs[match.match];
+		var reverse = match.match > othernum;
+		var matchnum = reverse ? match.match : othernum;
+		var match2 = matches.find(m => m.match === othernum);
+
+		if (!match2.closed)
+			return;
+
+		var [ s1, s2 ] = match.score;
+		winner = s1 > s2 ? match.team1 : match.team2;
+		var [ c1, c2 ] = match2.score;
+		winner2 = c1 > c2 ? match2.team1 : match2.team2;
+
+		if (reverse) {
+			var tmp = winner;
+			winner = winner2;
+			winner2 = tmp;
+		}
+
+			// get smaller match num
+		// get match num in next round 
+		if (match.round === 1)
+			nextmatchnum = 16 + (matchnum / 2);
+		else if (match.round === 2)
+			nextmatchnum = 24 + ((matchnum - 16) / 2);
+		else if (match.round === 3)
+			nextmatchnum = 28 + ((matchnum - 24) / 2);
+		else if (match.round === 4)
+			nextmatchnum = 30 + ((matchnum - 28) / 2);
+
+		console.log('nextmatchnum', nextmatchnum, winner, winner2);
+		console.log(match, match2);
+
+		var builder = NOSQL('matches_' + year).modify({ team1: winner, team2: winner2 });
+		builder.first();
+		builder.where('match', nextmatchnum);
+		builder.where('category', category);
+		builder.callback((err, response) => {
+			if (err)
+				console.log('[Schema:matches] failed at fillNewMatch, update new match');
+		});
+	});
+};
 
 const shuffle = (array) => {
 	let currentIndex = array.length, randomIndex;
