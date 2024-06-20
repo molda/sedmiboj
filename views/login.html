@@ -19,42 +19,25 @@
 	</style>
 </head>
 
-<body data---="exec" class="login">
+<body data---="exec" class="login" style="background-color: #ff9a36;">
 
 	<div data---="LAZY loading__null__style:1"></div>
 	<div data---="LAZY message__null__style:2"></div>
 	<div data---="LAZY notify__null__position:bottom right"></div>
 	<div data---="LAZY imageuploader"></div>
 
-	<div data-scope="login" class="flex justify-center align-center h-full form">
-		<div data-bind="?.page__show:value==='signin'" class="hidden">
-			<div class="p-8">
-				<img data-bind="common.dark__src:value?'/img/logo-text-bottom-white.svg':'/img/logo-text-bottom.svg'" class="logo"/>
-			</div>
-			<div data-scope="signin" class="border p-4 shadow-gray radius">
-				<div data---="enter__?">
-					<div class="m" data---="input__?.email__required:1;autofill:username">Email</div>
-					<div class="m" data---="input__?.password__required:1;autofill:password;type:password;maxlength:30">Heslo</div>
-					<div class="m">
-						<button class="btn btn-primary btn-block btn-large b exec" data-exec="?1/signinsubmit" name="submit">Přihlásit</button>
-						<div class="alert alert-warning mt10" data-bind="?.message__show__text" onclick="this.classList.add('hidden')"></div>
-					</div>
-				</div>
-			</div>
+	<div data-scope="login" class="flex flex-column justify-center align-center h-full form">
+		<div class="p-8">
+			<img src="/img/logo.jpeg" class="logo" style="height: 336px"/>
 		</div>
-
-		<div data-bind="?.page__show:value==='code'" class="hidden">
-			<div class="p-8">
-				<img data-bind="common.dark__src:value?'/img/logo-text-bottom-white.svg':'/img/logo-text-bottom.svg'" class="logo"/>
-				<div class="b center font-l">@(Verification)</div>
-			</div>
-			<div data-scope="code" class="border p-4 shadow-gray radius">
-				<figure>
-					<div data---="pin__?.pin__exec:?1/codesubmit;mask:false;count:6;$id:signinpin"></div>
-					<div class="help">@(Didn't receive a verification code?)</div>
-					<div class="help resend exec" style="margin-top:3px" data-exec="?1/resend_pin">@(Resend code)<i class="far fa-angle-right"></i></div>
-					<div class="help resend exec b" style="margin-top:3px;color:#f06723" data-exec="?1/back"><i class="far fa-angle-left mr5 nml"></i>@(Back)</div>
-				</figure>
+		<div class="border p-4 shadow-gray radius" style="background-color: white;">
+			<div data---="enter__?">
+				<div class="m" data---="input__?.email__required:1;autofill:username">Email</div>
+				<div class="m" data---="input__?.password__required:1;autofill:password;type:password;maxlength:30">Heslo</div>
+				<div class="m">
+					<button class="btn btn-primary btn-block btn-large b exec" data-exec="?/signinsubmit" name="submit">Přihlásit</button>
+					<div class="alert alert-warning mt10" data-bind="?.message__show__text" onclick="this.classList.add('hidden')"></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -65,20 +48,23 @@
 		WATCH('common.dark', (path, val) => {
 			$('body').tclass('ui-dark', val);
 		});
+
 		CACHEPATH('common.dark', '1 year');
 
 		PLUGIN('login', function(exports) {
 
-			exports.code = function() {
-				SET('?.page', 'code');
-				setTimeout(ASETTER('#signinpin/focus'), 100);
-				setQS('p', 'code');
-			};
-
 			exports.signinsubmit = function() {
 				SETTER('loading/show');
-				var model = GET('?.signin');
-
+				var model = GET('?');
+				AJAX('POST /login', model, (value, err, res) => {
+					SETTER('loading/hide', 500);
+					if (!err && res.status === 200 && value?.ok)
+						location.href = '/';
+					else {
+						exports.scope();
+						SET('?.message', 'Neexistující uživatel nebo špatné heslo.');
+					}
+				});
 			};
 		});
 	</script>

@@ -9,8 +9,10 @@ NEWSCHEMA('Teams', function(schema) {
 
 	schema.setQuery(function($) {
 
-        var year = $.query.year || new Date().getFullYear();
-		NOSQL('teams_' + year).find().sort('id').callback((err, response, meta) => {
+        if (!$.query.eventid)
+            return $.invalid('NOEVENTID');
+
+		NOSQL('teams_' + $.query.eventid).find().sort('id').callback((err, response, meta) => {
             if (err)
                 $.invalid('error');
             else
@@ -20,18 +22,20 @@ NEWSCHEMA('Teams', function(schema) {
 
     schema.setInsert(function($) {
 
-        var year = $.query.year || new Date().getFullYear();
+        if (!$.query.eventid)
+            return $.invalid('NOEVENTID');
 
-		NOSQL('teams_' + year).insert($.model);
+		NOSQL('teams_' + $.query.eventid).insert($.model);
 
         $.success();
 	});
 
     schema.setUpdate(function($) {
 
-        var year = $.query.year || new Date().getFullYear();
+        if (!$.query.eventid)
+            return $.invalid('NOEVENTID');
 
-		NOSQL('teams_' + year).modify($.model).where('id', $.model.id).callback((err, response) => {
+		NOSQL('teams_' + $.query.eventid).modify($.model).where('id', $.model.id).callback((err, response) => {
 
             $.success();
 
@@ -57,5 +61,5 @@ for (let i = 0; i < 64; i = i + 2) {
     var num = i / 2;
     var data = { id: 'team' + num, number: num + 1, player1: getRandomName() + ' ' + getRandomSurname(), player2: getRandomName() + ' ' + getRandomSurname(), name: 'Tým č.' + (num + 1) };
     console.log('Insert', data);
-    NOSQL('teams_' + new Date().getFullYear()).insert(data);
+    NOSQL('teams_id_20230702_dvojice-zen').insert(data);
 }*/

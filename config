@@ -1,4 +1,4 @@
 name                     : Sedmiboj
 
-cookie        (generate) : 6
-cookie_secret (generate) : 10
+cookie               (generate) : 10
+cookie_name          (generate) : 10

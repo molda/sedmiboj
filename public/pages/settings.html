@@ -1,1 +1,55 @@
-SETTINGS
+<style>
+    .width_7 { width: calc(100% / 7); }
+</style>
+
+<div class="flex flex-column h-full overflow-hidden">
+    <div class="flex space-between align-center px-4 my-2">
+        <h2>Nastavení</h2>
+    </div>
+    <div class="hidden m-4 p-4 bg-primary radius mb-4">
+        <div data---="input__settings.compact__type:checkbox">Kompaktní zobrazení</div>
+    </div>
+    <div class="px-4 hidden">
+        <button class="btn btn-primary mb-2" onclick="EXEC('settings/clearmatches', '2023')"><i class="fa fa-trash mr-2"></i>Vymazat zápasy rok 2023</button>
+        <br>
+        <button class="btn btn-primary" onclick="EXEC('settings/clear', '2023')"><i class="fa fa-trash mr-2"></i>Vymazat týmy a zápasy rok 2023</button>
+    </div>
+</div>
+
+
+<script>
+
+    PLUGIN('settings', function(exports){
+        exports.reload = function() {
+            
+        };
+
+        exports.clearmatches = function(year) {
+            SETTER('confirm', 'show', 'Všechny zápasy pro rok {0} budou vymazány.<br>Jste si jistý?'.format(year), ['Ano', 'Zrušit'], function(index) {
+                if (index)
+                    return;
+                SETTER('loading/show');
+                AJAX('GET /api/clearmatches?year=' + year, function(val, err, res){
+                    SETTER(true, 'notify/success', 'Všechny zápasy vymazány.');
+                    SETTER('loading/hide', 100);
+                    setTimeout(() => { location.href = '/'}, 2000);
+                });
+            });
+        };
+
+        exports.clear = function(year) {
+            SETTER('confirm', 'show', 'Všechny týmy a zápasy pro rok {0} budou vymazány.<br>Jste si jistý?'.format(year), ['Ano', 'Zrušit'], function(index) {
+                if (index)
+                    return;
+                SETTER('loading/show');
+                AJAX('GET /api/clear?year=' + year, function(val, err, res){
+                    SETTER(true, 'notify/success', 'Všechny zápasy a týmy vymazány.');
+                    SETTER('loading/hide', 100);
+                    setTimeout(() => { location.href = '/'}, 2000);
+                });
+            });
+        };
+        
+    });
+
+</script>

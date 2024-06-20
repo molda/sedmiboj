@@ -14,15 +14,12 @@ NEWSCHEMA('Matches', function(schema) {
 
 	schema.setQuery(function($) {
 
-		var { category } = $.query;
+		var { category, eventid } = $.query;
+		if (!eventid)
+			return $.invalid('NOEVENTID');
 
-		if (!category)
-			return $.callback({ error: 'invalid category' });
-
-		var year = $.query.year || new Date().getFullYear();
-
-		var builder = NOSQL('matches_' + year).find();
-		builder.where('category', category);
+		var builder = NOSQL('matches_' + eventid).find();
+		category && builder.where('category', category);
 		builder.sort('match_asc');
 		builder.callback((err, response, meta) => {
 			if (err)
@@ -33,9 +30,12 @@ NEWSCHEMA('Matches', function(schema) {
 	});
 
 	schema.setUpdate(function($){
-		var year = $.query.year || new Date().getFullYear();
-		console.log('UPDATING', $.model.id, $.model.category, $.model.score);
-		var builder = NOSQL('matches_' + year).modify($.model);
+		var eventid = $.query.eventid;
+		if (!eventid)
+			return $.invalid('NOEVENTID');
+
+		console.log('UPDATING', eventid, $.model.id, $.model.category, $.model.score);
+		var builder = NOSQL('matches_' + eventid).modify($.model);
 		builder.first();
 		builder.where('id', $.model.id);
 		builder.where('category', $.model.category);
@@ -44,30 +44,61 @@ NEWSCHEMA('Matches', function(schema) {
 			if (err)
 				$.invalid('error');
 			else {
-				$.model.closed && fillNewMatch(year, $.model.category, $.model.id);
+				$.model.closed && fillNewMatch(eventid, $.model.category, $.model.id);
 				setTimeout(() => $.callback(response), 2000);
+				console.log('Clear cache');
+				CACHE('rankings', [], '5 seconds');
 			}
 		});
 	});
 
 	schema.addWorkflow('init', function($){
-		var ctrl = EXEC('GET Meta --> read', function(err, response) {
+		var eventid = $.query.eventid;
+		if (!eventid)
+			return $.invalid('NOEVENTID');
+
+		var ctrl = EXEC('GET Events --> read', function(err, response) {
 
 			if (!err && response && !response.init) {
 
-				EXEC('GET Teams --> query', function(err, response) {
+				var ctrl2 = EXEC('GET Teams --> query', function(err, response) {
 					console.log('TEAMS', err, response);
-					var year = new Date().getFullYear();
-					init(response, (matches) => matches.forEach(match => NOSQL('matches_' + year).insert(match)));
-					setTimeout($.success.bind($), 3000);
+					init(response, (matches) => matches.forEach(match => NOSQL('matches_' + eventid).insert(match)));
+					NOSQL('events').modify({ init: true }).where('id', eventid).callback((err, response) => {
+
+						setTimeout($.success.bind($), 3000);
+			
+					});
 				});
+				ctrl2.query = { eventid };
 
 			} else {
 				$.success(false, { error: err || 'Již slosováno.'});
 			}
 
 		});
-		ctrl.query = { year: new Date().getFullYear() };
+		ctrl.query = { eventid };
+	});
+
+	schema.addWorkflow('isfree', function($){
+		var eventid = $.query.eventid;
+		if (!eventid)
+			return $.invalid('NOEVENTID');
+
+		var team = $.query.team;
+		var builder = NOSQL('matches_' + eventid).find();
+		builder.or(function() {
+			builder.where('team1', team);
+			builder.where('team2', team);
+		});
+		builder.callback((err, response, meta) => {
+			var active = (response || []).filter(m => m.active).map(m => m.category);
+			console.log('isfree', team, active);
+			if (err)
+				$.invalid('error');
+			else
+				$.callback({ active });
+		});
 	});
 
 });
@@ -76,8 +107,8 @@ const matchPairs = {};
 for (let i = 1; i < 33; i++) // { 1: 2, 2: 1, .... }
 	matchPairs[i] = i % 2 === 0 ? i - 1 : i + 1;
 
-const fillNewMatch = (year, category, id) => {
-	var builder = NOSQL('matches_' + year).find();
+const fillNewMatch = (eventid, category, id) => {
+	var builder = NOSQL('matches_' + eventid).find();
 	builder.where('category', category);
 	builder.callback((err, matches) => {
 		if (err || !matches || !matches.length)
@@ -85,8 +116,8 @@ const fillNewMatch = (year, category, id) => {
 		var match = matches.find(m => m.id === id);
 		var nextmatchnum;
 		var winner, winner2;
-console.log('MATCH', match);
-console.log('OTHER', matchPairs[match.match]);
+//console.log('MATCH', match);
+//console.log('OTHER', matchPairs[match.match]);
 		var othernum = matchPairs[match.match];
 		var reverse = match.match > othernum;
 		var matchnum = reverse ? match.match : othernum;
@@ -106,7 +137,7 @@ console.log('OTHER', matchPairs[match.match]);
 			winner2 = tmp;
 		}
 
-			// get smaller match num
+		// get smaller match num
 		// get match num in next round 
 		if (match.round === 1)
 			nextmatchnum = 16 + (matchnum / 2);
@@ -115,18 +146,32 @@ console.log('OTHER', matchPairs[match.match]);
 		else if (match.round === 3)
 			nextmatchnum = 28 + ((matchnum - 24) / 2);
 		else if (match.round === 4)
-			nextmatchnum = 30 + ((matchnum - 28) / 2);
+			nextmatchnum = 30 + ((matchnum - 28) / 2) + 1;
 
-		console.log('nextmatchnum', nextmatchnum, winner, winner2);
-		console.log(match, match2);
+		if (nextmatchnum > 32)
+			return;
 
-		var builder = NOSQL('matches_' + year).modify({ team1: winner, team2: winner2 });
+		//console.log('nextmatchnum', nextmatchnum, winner, winner2);
+		//console.log(match, match2);
+
+		var builder = NOSQL('matches_' + eventid).modify({ team1: winner, team2: winner2 });
 		builder.first();
 		builder.where('match', nextmatchnum);
 		builder.where('category', category);
 		builder.callback((err, response) => {
 			if (err)
 				console.log('[Schema:matches] failed at fillNewMatch, update new match');
+			if (nextmatchnum === 32) {
+				var looser = s1 < s2 ? match.team1 : match.team2;
+				var looser2 = c1 < c2 ? match2.team1 : match2.team2;
+				var builder = NOSQL('matches_' + eventid).modify({ team1: looser, team2: looser2 });
+				builder.first();
+				builder.where('match', nextmatchnum - 1);
+				builder.where('category', category);
+				builder.callback((err, response) => {
+
+				});
+			}
 		});
 	});
 };
@@ -177,20 +222,28 @@ var init = (teams, callback) => {
 const init2 = (teams, category) => {
 	var teams2 = shuffle(teams.map(t => t));
 	var matches = [];
+
+	// 1st round - 16 matches
 	for (let i = 0; i < 16; i++)
 		matches.push({ category, team1: teams2.pop().id, team2: teams2.pop().id, id: 'match' + (i + 1), match: (i + 1), score: [0, 0], round: 1, active: false, closed: false });
 
+	// 2nd round - 8 matches
 	for (let i = 16; i < 24; i++)
 		matches.push({ category, team1: '', team2: '', id: 'match' + (i + 1), match: (i + 1), score: [], round: 2, active: false, closed: false });
 
+	// 3rd round - 4 matches
 	for (let i = 24; i < 28; i++)
 		matches.push({ category, team1: '', team2: '', id: 'match' + (i + 1), match: (i + 1), score: [], round: 3, active: false, closed: false });
 
+	// 4th round - 2 matches
 	for (let i = 28; i < 30; i++)
 		matches.push({ category, team1: '', team2: '', id: 'match' + (i + 1), match: (i + 1), score: [], round: 4, active: false, closed: false });
 
-	for (let i = 30; i < 31; i++)
-		matches.push({ category, team1: '', team2: '', id: 'match' + (i + 1), match: (i + 1), score: [], round: 5, active: false, closed: false });
+	// 3rd/4th place
+	matches.push({ category, team1: '', team2: '', id: 'match31', match: 31, score: [], round: 5, active: false, closed: false });
+
+	// 1st/2nd place
+	matches.push({ category, team1: '', team2: '', id: 'match32', match: 32, score: [], round: 6, active: false, closed: false });
 
 	matches[0].active = true;
 	return matches;

@@ -1,0 +1,213 @@
+<style>
+    .~PATH~ .grid-trees {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    .~PATH~ .grid-winners { grid-template-columns: 40px minmax(260px, 1fr) repeat(7, 50px) 40px 120px; }
+    .~PATH~ .font-m { font-size: 1rem !important; }
+    .~PATH~ .font-sm { font-size: .85rem !important; }
+    .~PATH~ h2 { font-size: 1.4rem !important; margin: 8px; }
+    .~PATH~ .h-8 { height: 24px; }
+    .~PATH~ .h-10 { height: 40px; }
+    .~PATH~ .py { padding-top: 2px !important; padding-bottom: 2px !important; }
+</style>
+<div data-scope=~PATH~"" class="~PATH~ h-full w-full">
+    <div class="grid grid-trees h-full w-full">
+        <div data-bind="common.matches.tennis__template:{#tree_tmpl}"></div>
+        <div data-bind="common.matches.pingpong__template:{#tree_tmpl}"></div>
+        <div data-bind="common.matches.football__template:{#tree_tmpl}"></div>
+        <div data-bind="common.matches.voleyball__template:{#tree_tmpl}"></div>
+        <div data-bind="common.matches.basketball__template:{#tree_tmpl}"></div>
+        <div data-bind="common.matches.handball__template:{#tree_tmpl}"></div>
+        <div data-bind="common.matches.netball__template:{#tree_tmpl}"></div>
+        <div>
+            <div class="table">
+                <div class="grid grid-winners font-m">
+                    <div class="flex align-center justify-center h-10 border-bottom bg-primary radius-lt b">Pořadí</div>
+                    <div class="flex align-center justify-center h-10 border-bottom bg-primary b">Jméno týmu</div>
+                    <div class="flex align-center justify-center h-10 border-bottom text-white bg-tennis">Tenis</div>
+                    <div class="flex align-center justify-center h-10 border-bottom text-white bg-pingpong">Pingpong</div>
+                    <div class="flex align-center justify-center h-10 border-bottom text-white bg-football">Fotbal</div>
+                    <div class="flex align-center justify-center h-10 border-bottom text-white bg-voleyball">Volejbal</div>
+                    <div class="flex align-center justify-center h-10 border-bottom text-white bg-basketball">Basketbal</div>
+                    <div class="flex align-center justify-center h-10 border-bottom text-white bg-handball">Házená</div>
+                    <div class="flex align-center justify-center h-10 border-bottom text-white bg-netball">Nohejbal</div>
+                    <div class="flex align-center justify-center h-10 border-bottom bg-primary b"><i class="far fa-trophy-alt"></i><i class="far fa-long-arrow-alt-down ml fa-fw pointer exec" data-exec="?/sort_wins"></i></div>
+                    <div class="flex align-center justify-center h-10 border-bottom bg-primary radius-rt b">Počet bodů<i class="far fa-long-arrow-alt-down ml fa-fw pointer exec" data-exec="?/sort_points"></i></div>
+                </div>
+                <div data-bind="common.rankings__template" class="font-m">
+                    <script type="text/html">
+                        {{ foreach team in value }}
+                        <div class="grid grid-winners hover_children-bg-accent">
+                            <div class="flex align-center justify-end h-8 bg-primary border-bottom">{{ $index + 1 }}.</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom">{{ team.id | player_names }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom{{ if team.active === 'tennis' }} bg-theme{{ fi }}">{{ team.scores.tennis }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom{{ if team.active === 'pingpong' }} bg-theme{{ fi }}">{{ team.scores.pingpong }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom{{ if team.active === 'football' }} bg-theme{{ fi }}">{{ team.scores.football }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom{{ if team.active === 'voleyball' }} bg-theme{{ fi }}">{{ team.scores.voleyball }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom{{ if team.active === 'basketball' }} bg-theme{{ fi }}">{{ team.scores.basketball }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom{{ if team.active === 'handball' }} bg-theme{{ fi }}">{{ team.scores.handball }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom{{ if team.active === 'netball' }} bg-theme{{ fi }}">{{ team.scores.netball }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom">{{ team.wins }}</div>
+                            <div class="flex align-center justify-center h-8 bg-primary border-bottom b">{{ team.total }}</div>
+                        </div>
+                        {{ end }}
+                    </script>
+                </div>
+                <div class="radius-lb radius-rb h-2 bg-primary">
+                </div>
+            </div>  
+        </div>
+    </div>
+</div>
+
+<template id="tree_tmpl">
+    <div data-scope="~PATH~" class="px-4 h-full w-full">
+        <div class="flex space-between justify-center align-center">
+            <h2>{{ value[0].category | category }}</h2>
+        </div>
+        <div data-bind="common.teams__show:value && value.length === 32" class="hidden flex">
+            <div data-bind="common.matches.~PATH~__template" class="flex flex-column column">
+                <script type="text/html">
+                    {{ foreach match in value }}
+                        {{ if match.round === 1 }}
+                        <div class="flex mx-2">
+                            <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme{{ else }} bg-primary{{ fi }} px-2 py radius mb-half flex exec">
+                                <div class="flex flex-column w-full">
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team1') }}{{ match.team1 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team1 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team2') }}{{ match.team2 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team2 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ fi }}
+                    {{ end }}
+                </script>
+            </div>
+            <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around">
+                <script type="text/html">
+                    {{ foreach match in value }}
+                        {{ if match.round === 2 }}
+                        <div class="flex mx-2 mw-100px">
+                            <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme{{ else }} bg-primary{{ fi }} px-2 py radius pointer flex">
+                                <div class="flex flex-column w-full">
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team1') }}{{ match.team1 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team1 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team2') }}{{ match.team2 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team2 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ fi }}
+                    {{ end }}
+                </script>
+            </div>
+            <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around">
+                <script type="text/html">
+                    {{ foreach match in value }}
+                        {{ if match.round === 3 }}
+                        <div class="flex mx-2 mw-100px">
+                            <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme{{ else }} bg-primary{{ fi }} px-2 py radius pointer flex">
+                                <div class="flex flex-column w-full">
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team1') }}{{ match.team1 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team1 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team2') }}{{ match.team2 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team2 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ fi }}
+                    {{ end }}
+                </script>
+            </div>
+            <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around">
+                <script type="text/html">
+                    {{ foreach match in value }}
+                        {{ if match.round === 4 }}
+                        <div class="flex mx-2 mw-100px">
+                            <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme{{ else }} bg-primary{{ fi }} px-2 py radius pointer flex">
+                                <div class="flex flex-column w-full">
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team1') }}{{ match.team1 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team1 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                    <div class="flex space-between align-center">
+                                        <div class="font-sm hellip font-bold">{{ match | is_playing('team2') }}{{ match.team2 | player_surnames }}</div>
+                                        <div>{{ if match.winner === match.team2 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ fi }}
+                    {{ end }}
+                </script>
+            </div>
+            <div data-bind="common.matches.~PATH~__template" class="flex flex-column column space-around relative">
+                <script type="text/html">
+                {{ foreach match in value }}
+                    {{ if match.match === 32 }}
+                    <div class="flex mx-2 relative mw-100px">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme{{ else }} bg-primary{{ fi }} px-2 py radius pointer flex">
+                            <div class="flex flex-column w-full">
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm hellip font-bold">{{ match | is_playing('team1') }}{{ match.team1 | player_surnames }}</div>
+                                    <div>{{ if match.winner === match.team1 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                </div>
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm hellip font-bold">{{ match | is_playing('team2') }}{{ match.team2 | player_surnames }}</div>
+                                    <div>{{ if match.winner === match.team2 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ fi }}
+                    {{ if match.match === 31 }}
+                    <div class="flex mx-8 absolute mw-100px" style="left: -130%;">
+                        <div class="shadow w-full{{ if match.closed }} bg-accent{{ else if match.active }} bg-theme{{ else }} bg-primary{{ fi }} px-2 py radius pointer flex">
+                            <div class="flex flex-column w-full">
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm hellip font-bold">{{ match | is_playing('team1') }}{{ match.team1 | player_surnames }}</div>
+                                    <div>{{ if match.winner === match.team1 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                </div>
+                                <div class="flex space-between align-center">
+                                    <div class="font-sm hellip font-bold">{{ match | is_playing('team2') }}{{ match.team2 | player_surnames }}</div>
+                                    <div>{{ if match.winner === match.team2 }}<i class="far fa-trophy-alt"></i>{{ fi }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ fi }}
+                {{ end }}
+                </script>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+
+    PLUGIN('~PATH~', function(exports){
+        exports.reload = function() {
+            SETTER('loading/show');
+            AJAX('GET /api/rankings', function(value, err, res){
+                value = value.quicksort('wins_desc');
+                SET('common.rankings', value);
+                SETTER('loading/hide', 100);
+            });
+        };
+    });
+
+</script>

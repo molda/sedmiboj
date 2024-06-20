@@ -25,4 +25,28 @@ NEWSCHEMA('Meta', function(schema) {
         });
 	});
 
+	schema.addWorkflow('clear', function($){
+		var year = $.query.year || new Date().getFullYear();
+		NOSQL('matches_' + year).clear((err, response, meta) => {
+            NOSQL('teams_' + year).clear((err, response, meta) => {
+                NOSQL('meta').modify({ data: { init: false }}).where('year', year).callback((err, response) => {
+
+                    $.success();
+        
+                });
+            });
+        });
+	});
+
+	schema.addWorkflow('clearmatches', function($){
+		var year = $.query.year || new Date().getFullYear();
+		NOSQL('matches_' + year).clear((err, response, meta) => {
+            NOSQL('meta').modify({ data: { init: false }}).where('year', year).callback((err, response) => {
+
+                $.success();
+    
+            });
+        });
+	});
+
 });

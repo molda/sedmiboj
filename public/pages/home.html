@@ -1,0 +1,74 @@
+<style>
+    .home-page { max-width: 900px; }
+    .grid-annuals { grid-template-columns: 1fr 3fr 1fr; }
+</style>
+
+<div class="home-page flex flex-column h-full overflow-hidden p-4">
+    <div class="flex space-between align-center px-4 my-2">
+        <h2>Míčový sedmiboj - Lhota u Nahořan</h2>
+    </div>
+    <div class="shadow radius p-4 bg-primary mb-4 hidden" data-bind="user__show:value&&value.admin">
+        <div data---="input__meta.name__placeholder:Dvojice mužů" class="mb-2">Název</div>
+        <div data---="input__meta.counter" class="mb-2">Ročník</div>
+        <div data---="input__meta.date__type:date;format:dd.MM.yyyy" class="mb-2">Datum konání</div>
+        <button class="btn btn-primary" onclick="EXEC('home/submit')">Vytvořit ročník</button>
+    </div>
+    <h3 class="hidden" data-bind="common.eventid__hide">Kliknutím na jeden z řádku tabulky, si zvolte, který ročník si chcete prohlédnout.</h3>
+    <div class="table">
+        <div class="grid grid-annuals font-m">
+            <div class="flex align-center justify-center h-10 border-bottom bg-primary radius-lt b">Termín konání</div>
+            <div class="flex align-center justify-center h-10 border-bottom bg-primary b">Název</div>
+            <div class="flex align-center justify-center h-10 border-bottom bg-primary radius-rt b">Ročník</div>
+        </div>
+        <div data-bind="common.events__template" class="font-m">
+            <script type="text/html">
+                {{ foreach event in value }}
+                <div class="grid grid-annuals hover_children-bg-accent pointer {{ if event.selected }}bg-theme{{ else }}bg-primary{{ fi }}" onclick="EXEC('home/select', '{{ event.id }}')">
+                    <div class="flex align-center justify-center h-8 border-bottom">{{ event.date | format('dd.MM.yyyy') }}</div>
+                    <div class="flex align-center justify-center h-8 border-bottom">{{ event.name }}</div>
+                    <div class="flex align-center justify-center h-8 border-bottom">{{ event.counter }}</div>
+                </div>
+                {{ end }}
+            </script>
+        </div>
+        <div class="radius-lb radius-rb h-2 bg-primary">
+        </div>
+    </div> 
+</div>
+
+
+<script>
+
+    PLUGIN('home', function(exports){
+        exports.reload = function() {
+            AJAX('GET /api/events', function(val = [], err, res){
+                var eventid = localStorage.getItem('eventid');
+                if (eventid)
+                    val.forEach(ev => {
+                        if (ev.id === eventid)
+                            ev.selected = true;
+                    });
+                SET('common.events', val);
+            });
+        };
+        
+        exports.submit = function() {
+            var meta = GET('meta');
+            meta.id = `id_${meta.date.format('dd.MM.yyyy').split('.').reverse().join('')}_${meta.name}`.slug();
+            AJAX('POST /api/events', meta, function(val, err, res){
+                if (!err && res.status === 200)
+                    SETTER(true, 'notify/success', `Ročník "${meta.name}" úspěšně vytvořen.`);
+                else
+                    SETTER(true, 'notify/warning', `Něco se nepovedlo. Obnovte stránku a zkuste to znovu.`);
+                exports.reload();
+                UPD('common.eventid');
+            });
+        };
+
+        exports.select = function(eventid) {
+            localStorage.setItem('eventid', eventid);
+            setTimeout(() => { location.pathname = '/teams/'; }, 200);
+        };
+    });
+
+</script>

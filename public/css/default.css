@@ -6,8 +6,11 @@
 	--bg-theme-rgb: 245,145,33;
 	--bg-primary: #fff;
 	--bg-primary-inverted: #1c1c1c;
+	--bg-primary-rgb:255,255,255;
 	--bg-accent: #e4e4e4;
+	--bg-accent-rgb:228,228,228;
 	--bg-accent-light: #afafaf;
+	--bg-accent-light-rgb:175,175,175;
 	--bg-primary-border: #9f9f9f;
 	--bg-primary-border-light: #d2d2d2;
 	--radius: 10px;
@@ -23,8 +26,11 @@
 	--bg-theme-rgb: 245,145,33;
 	--bg-primary: #1c1c1c;
 	--bg-primary-inverted: #fff;
+	--bg-primary-rgb:28,28,28;
 	--bg-accent: #3e3e3e;
+	--bg-accent-rgb:62,62,62;
 	--bg-accent-light: #676767;
+	--bg-accent-light-rgb:175,175,175;
 	--bg-primary-border: #3b3b3b;
 	--bg-primary-border-light: #2b2b2b;
 	--font-color: #fff;
@@ -88,3 +94,20 @@ html,body { background-color: var(--bg-primary); overflow: hidden; margin: 0; pa
 .ui-dark .active-outline { outline-color: var(--color); }
 
 @keyframes blink { 50% { outline-color: transparent; }  }
+
+.playing {
+	width: 16px;
+    height: 16px;
+	margin-right: 4px;
+    border-radius: 4px;
+    background-color: white;
+    align-content: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+	color: var(--color);
+}
+
+.ui-dark .ui-loading-text { color: white; }
+
+.grid-row:nth-child(odd) { background-color: rgb(var(--bg-accent-rgb)); }

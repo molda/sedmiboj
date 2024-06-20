@@ -1,7 +1,9 @@
 .block { display: block; }
 .flex { display: flex; }
 .flex-column { flex-direction: column; }
+.flex-1 { flex: 1; }
 .grid { display: grid; }
+.grid-col-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-col-4 { grid-template-columns: repeat(4, minmax(300px, 1fr)); }
 .gap  { gap: 8px; }
 .gap-2  { gap: 16px; }
@@ -21,10 +23,15 @@
 .l-15 { left: 60px; }
 .h-full { height: 100%; }
 .w-full { width: 100%; }
+.h-2 { height: 8px; }
 .h-8 { height: 32px; }
-.w-8 { width: 32px; }
+.h-10 { height: 40px; }
 .h-14 { height: 56px; }
+.h-33p { height: 33%; }
+.w-8 { width: 32px; }
 .w-14 { width: 56px; }
+.wmax-fit { max-width: fit-content; }
+.mw-100px { min-width: 100px; }
 .z-10 { z-index: 10; }
 .m-2 { margin: 8px !important; }
 .m-4 { margin: 16px !important; }
@@ -33,10 +40,12 @@
 .mt-2 { margin-top: 8px !important; }
 .mt-4 { margin-top: 16px !important; }
 .mt-23px { margin-top: 23px; }
+.ml { margin-left: 4px !important; }
 .ml-2 { margin-left: 8px !important; }
 .ml-4 { margin-left: 16px !important; }
 .mb-2 { margin-bottom: 8px !important; }
 .mb-4 { margin-bottom: 16px !important; }
+.mb-half { margin-bottom: 2px !important; }
 .p { padding: 4px !important; }
 .p-2 { padding: 8px !important; }
 .p-4 { padding: 16px !important; }
@@ -54,47 +63,67 @@
 .mx-2 { margin-left: 8px !important; margin-right: 8px !important; }
 .mx-4 { margin-left: 16px !important; margin-right: 16px !important; }
 .mx-8 { margin-left: 32px !important; margin-right: 32px !important; }
+.my-2 { margin-top: 8px !important; margin-bottom: 8px !important; }
+.my-4 { margin-top: 16px !important; margin-bottom: 16px !important; }
+.my-8 { margin-top: 32px !important; margin-bottom: 32px !important; }
 .scale-07 { scale: .7; }
 
 .parent-hover_show { display: none; }
 *:hover > .parent-hover_show { display: block; }
 
 .no-bg { background-color: transparent !important; }
-.bg-dark { background-color: #1c1c1c; }
-.bg-active { background-color: #00ff00; }
-.bg-grey-light { background-color: #ddd; }
 .ui-dark .bg-grey-light { background-color: #4d4d4d; }
-.bg-theme { background-color: var(--color); }
 .bg-primary { background-color: var(--bg-primary); }
 .bg-accent { background-color: var(--bg-accent-light); }
 .bg-primary-inverted { background-color: var(--bg-primary-inverted); }
+.bg-grey-light { background-color: #ddd; }
+.bg-dark { background-color: #1c1c1c; }
+.bg-active { background-color: #00ff00; }
+.bg-theme { background-color: var(--color) !important; }
 .h-header { height: 28px; }
 .shadow { box-shadow: 0 3px 10px rgb(232 36 41 / 25%); }
 .shadow-gray { box-shadow: 0 3px 10px rgb(0 0 0 / 15%); }
 .pointer { cursor: pointer; }
 .rounded { border-radius: 50%; }
 
+.text-primary { color: var(--color) !important; }
 .text-white { color: #fff !important; }
 .text-black { color: #000 !important; }
 .text-black-inverted { color: #fff !important; }
 .ui-dark .text-black-inverted { color: #000 !important; }
 .text-gray { color: #777 !important; }
 .text-darkgray { color: #444 !important; }
-.text-lightgrey { color: #bbb !important; }
+.text-lightgrey, .text-lightgray { color: #bbb !important; }
 .ui-dark .dark_text-white { color: white !important; }
 .text-primary-inverted { color: var(--font-color-inverted); }
 
-.font-sm { font-size: 1.2rem; }
-.font-l { font-size: 2rem; }
+.font-sm { font-size: .9rem; }
+.font-m { font-size: 1.1rem; }
+.font-l { font-size: 1.7rem; }
 .font-xl { font-size: 3rem; }
 .font-xxl { font-size: 4rem; }
+.font-bold { font-weight: bold; }
 
 .border-dashed { border: var(--ab-border); }
 .border { border: 1px solid var(--bg-accent); }
 .border-bottom { border-bottom: 1px solid var(--bg-accent); }
+
 .radius { border-radius: var(--radius); }
 .radius-left { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); }
 .radius-right { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
-.hover-bg-accent:hover { background-color: #673c0c; }
+.radius-lt { border-top-left-radius: var(--radius); }
+.radius-rt { border-top-right-radius: var(--radius); }
+.radius-lb { border-bottom-left-radius: var(--radius); }
+.radius-rb { border-bottom-right-radius: var(--radius); }
+
 .bold { font-weight: bold; }
 .upper { text-transform: uppercase; }
+
+.hover-bg-accent:hover { background-color: var(--bg-accent-light); }
+.hover_children-bg-accent:hover > div { background-color: var(--bg-accent-light); }
+
+.noscrollbar::-webkit-scrollbar { display: none; }
+.noscrollbar { -ms-overflow-style: none;  scrollbar-width: none; }
+
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
