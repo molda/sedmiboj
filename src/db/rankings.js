@@ -38,7 +38,7 @@ export const queryRankings = async (filter = {}, opt = { orderby: 'wins' }) => {
 function createStructure(teams) {
     var tmp = [];
     teams.forEach(t => {
-        tmp.push({ id: t.id, team: t, wins: 0, total: 0, scores: { tennis: 0, pingpong: 0, football: 0, voleyball: 0, basketball: 0, handball: 0, netball: 0 }});
+        tmp.push({ id: t.id, team: t, wins: 0, total: 0, scores: { tenis: 0, pingpong: 0, fotbal: 0, volejbal: 0, basketbal: 0, hazena: 0, nohejbal: 0 }});
     });
     return tmp;
 };

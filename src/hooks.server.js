@@ -1,6 +1,7 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Credentials from '@auth/core/providers/credentials';
 import { connect } from '$db/mongo';
+import { AUTH_SECRET } from '$env/static/private';
 
 // Connect to MongoDB before starting the server
 connect().then(() => {
@@ -11,6 +12,9 @@ connect().then(() => {
 });
 
 export const handle = SvelteKitAuth({
+    useSecureCookies: true,
+	trustHost: true,
+    secret: AUTH_SECRET,
     providers: [
         Credentials({
             // You can specify which fields should be submitted, by adding keys to the `credentials` object.
@@ -21,20 +25,18 @@ export const handle = SvelteKitAuth({
             },
             authorize: async (credentials) => {
 
-                let user = {
-                    email: 'test',
-                    password: 'test'
-                };
+                var { email, password } = credentials;
+
+                if (email === 'admin' && password === 'lhota123')
+                    return {
+                        email: 'admin',
+                        //password: 'lhota123'
+                    };
+                else
+                    throw new Error('User not found.');
 
                 // logic to salt and hash password
                 
-//console.log('credentials', user, credentials);
-                // if (!user) {
-                //     throw new Error('User not found.')
-                // }
-
-                // return json object with the user data
-                return user;
             }
         })
     ],

@@ -7,6 +7,7 @@
 	import Confirm from '$lib/components/Confirm.svelte';
 	import { onMount } from 'svelte';
 
+
 	export let data;
 
 	let input_ref = null;
@@ -23,7 +24,7 @@
 
 	async function edit_team(id) {
 		var t = teams.find(t => t.id === id);
-		console.log('edit_team', t);
+		//console.log('edit_team', t);
 		team.set(t);
 		form_action = 'update';
 		form_visible = true;
@@ -32,17 +33,17 @@
 
 	async function delete_team(id) {
 		var t = teams.find(t => t.id === id);
-		console.log('delete_team', t);
+		//console.log('delete_team', t);
 		const res = await fetch(`/api/events/${$page.params.event}/teams/${id}`, { method: 'DELETE' });
 		const data = await res.json();
-		console.log('delete_team', data);
+		//console.log('delete_team', data);
 		await fetchTeams();
 	}
 
 	async function fetchTeams() {
 		const res = await fetch(`/api/events/${$page.params.event}/teams`, { headers: { Accept: 'application/json' }});
 		const data = await res.json();
-		console.log('fetchTeams', data.teams);
+		//console.log('fetchTeams', data.teams);
 		teams = data;
 	}
 
@@ -51,7 +52,7 @@
 		if (res.ok) {
 			location.href = `/events/${$page.params.event}/matches`;
 		} else {
-			console.error('prepare_matches', res);
+			console.error('prepare_matches failed', res);
 		}
 	};
 
@@ -63,10 +64,12 @@
 <div class="p-4 mx-auto">
 	<div class="flex justify-between mb-2">
 		<h1 class="text-4xl font-bold mb-2">Týmy</h1>
+		{#if $page.data.session?.user}
 		<div>
-			<button disabled={teams.length === 32} class="inline-flex justify-center items-center rounded-lg text-sm font-semibold h-10 py px-4 bg-primary-700 text-white hover:bg-primary-600 shadow-2xl disabled:opacity-50 disabled:hover:bg-primary-700" type="button" on:click={() => { team.set({}); form_action = 'create'; form_visible = true; setTimeout(() => input_ref.focus(), 300); }} bind:this={button_ref}><i class="fa-solid fa-plus mr-2 float-right"></i>Přidat tým</button>
-			<button disabled={teams.length !== 32 || $page.data.settings?.initialized} class="inline-flex justify-center items-center rounded-lg text-sm font-semibold h-10 py px-4 bg-primary-700 text-white hover:bg-primary-600 shadow-2xl disabled:opacity-50 disabled:hover:bg-primary-700" type="button" on:click={() => { prepare_matches();  }}><i class="fa-solid fa-play mr-2 float-right"></i>Spustit losování</button>
+			<button disabled={$page.data.settings?.initialized} class="inline-flex justify-center items-center rounded-lg text-sm font-semibold h-10 py px-4 bg-primary-700 text-white hover:bg-primary-600 shadow-2xl disabled:opacity-50 disabled:hover:bg-primary-700" type="button" on:click={() => { team.set({}); form_action = 'create'; form_visible = true; setTimeout(() => input_ref.focus(), 300); }} bind:this={button_ref}><i class="fa-solid fa-plus mr-2 float-right"></i>Přidat tým</button>
+			<button disabled={$page.data.settings?.initialized} class="inline-flex justify-center items-center rounded-lg text-sm font-semibold h-10 py px-4 bg-primary-700 text-white hover:bg-primary-600 shadow-2xl disabled:opacity-50 disabled:hover:bg-primary-700" type="button" on:click={() => { prepare_matches();  }}><i class="fa-solid fa-play mr-2 float-right"></i>Spustit losování</button>
 		</div>
+		{/if}
 	</div>
 	{#if $page.data.session?.user}
 	<div class="flex justify-end">

@@ -16,6 +16,9 @@ export async function load({ params }) {
 export const actions = {
 	create: async ({ request }) => {
 		var team = Object.fromEntries(await request.formData());
+		if (team.empty)
+			team.name = '<neobsazeno>';
+
         const result = await upsertRecord('teams', team);
         delete team._id;
         //console.log('Team created:', team, result);

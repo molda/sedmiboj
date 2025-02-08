@@ -5,6 +5,8 @@
     export let teams;
     let data;
 
+    var sport_data = $page.data.sports.find(s => s.id === sport);
+
     //console.log('PAGE', $page.data);
 
     function getTeamName(teamid) {
@@ -16,17 +18,33 @@
         else
             name = `${team.player1} & ${team.player2}`;
         return name;
-    }
+    };
+
+    function classes(status) {
+        switch (status) {
+            case 'active':
+                return 'bg-primary-700 text-white';
+            case 'closed':
+                return 'bg-slate-200';
+            default:
+                return '';
+        }
+    };
+
+    function getIcon(sport) {
+        var s = $page.data.sports.find(s => s.id === sport);
+        return s.icon ? `<i class="${s.icon}"></i>` : s.svg;
+    };
 
 </script>
 <div class="h-full flex flex-col">
-    <div class="b p-2 text-white flex justify-between align-center">
-        <div><i class="fa fa- mr-2"></i>{sport}</div>
+    <div class="b p-2 flex justify-between align-center">
+        <div class="flex items-center">{@html getIcon(sport) }&nbsp;{sport_data.name}</div>
         <!-- <div>Zbývá: </div> -->
     </div>
     {#each matches as match, idx}
     <div class="p-2">
-        <div class="shadow bg-primary rounded p-1">
+        <div class={ `shadow rounded p-1 ` + classes(match.status) }>
             <div class="flex justify-between">
                 {#if match.active}
                 <div class="mb-2 text-xs">Aktuální zápas: {match.match}</div>

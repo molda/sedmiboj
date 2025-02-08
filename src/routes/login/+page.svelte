@@ -34,11 +34,11 @@
 					<div class="px-2 pb-2 text-lg font-bold flex justify-center">Přihlásit</div>
 					<label class="flex flex-col w-full p-2">
 						<span class="p-2">Email</span>
-						<input name="email" type="email" bind:value={email} class="rounded-lg p-2 text-lg"/>
+						<input name="email" type="email" bind:value={email} class="rounded-lg p-2 text-lg bg-primary-100"/>
 					</label>
 					<label class="flex flex-col w-full p-2">
 						<span class="p-2">Password</span>
-						<input name="password" type="password" bind:value={password} class="rounded-lg p-2 text-lg"/>
+						<input name="password" type="password" bind:value={password} class="rounded-lg p-2 text-lg bg-primary-100"/>
 					</label>
 				</div>
 				{/if}

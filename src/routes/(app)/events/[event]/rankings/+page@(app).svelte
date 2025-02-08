@@ -15,7 +15,7 @@
 			.then(res => res.json())
 			.then(data => {
 				rankings = data.rankings.sort((a, b) => b[orderby] - a[orderby]);
-				console.log('fetchRankings', data);
+				//console.log('fetchRankings', data);
 			});
 	}
 
@@ -38,10 +38,17 @@
 		unsubscribe?.();
 	});
 
+	// function teamName(team) {
+	// 	if (team.player1 && team.player2)
+	// 		return `${team.player1} & ${team.player2}`;	
+	// 	return team.name;
+	// }
+
 	function teamName(team) {
-		if (team.player1 && team.player2)
-			return `${team.player1} & ${team.player2}`;	
-		return team.name;
+		if (!team.name && !team.player1 && !team.player2)
+			return ('<neobsazeno>').replace('<', '&lt;').replace('>', '&gt;');
+		
+		return (team.name || (team.player1 + ' | ' + team.player2)).replace('<', '&lt;').replace('>', '&gt;');
 	}
 
 	function toggleOrderby() {
@@ -84,13 +91,13 @@
 		<div class="grid grid-cols-[60px_minmax(300px,_1fr)_repeat(7,_90px)_100px_120px] bg-primary-100 pointer" class:bg-primary-200={idx % 2 !== 0}>
 			<div class="flex align-center justify-end h-7">{idx + 1}.</div>
 			<div class="flex align-center justify-center h-7">{teamName(team.team)}</div>
-			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'tennis' }>{team.scores.tennis}</div>
+			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'tenis' }>{team.scores.tenis}</div>
 			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'pingpong' }>{team.scores.pingpong}</div>
-			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'football' }>{team.scores.football}</div>
-			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'voleyball' }>{team.scores.voleyball}</div>
-			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'basketball' }>{team.scores.basketball}</div>
-			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'handball' }>{team.scores.handball}</div>
-			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'netball' }>{team.scores.netball}</div>
+			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'fotbal' }>{team.scores.fotbal}</div>
+			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'volejbal' }>{team.scores.volejbal}</div>
+			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'basketbal' }>{team.scores.basketbal}</div>
+			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'hazena' }>{team.scores.hazena}</div>
+			<div class="flex align-center justify-center h-7" class:bg-theme={ team.active === 'nohejbal' }>{team.scores.nohejbal}</div>
 			<div class="flex align-center justify-center h-7" class:font-bold={orderby === 'wins'}>{team.wins}</div>
 			<div class="flex align-center justify-center h-7" class:font-bold={orderby === 'total'}>{team.total}</div>
 		</div>

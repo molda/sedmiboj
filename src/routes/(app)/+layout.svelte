@@ -1,6 +1,6 @@
 <script>
 	import { setContext } from 'svelte';
-	export let data;
+	//export let data;
 	//console.log('app layout', data);
 
 	import AppMenu from '$app_components/AppMenu.svelte';

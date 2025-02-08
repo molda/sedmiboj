@@ -1,13 +1,14 @@
 <script>
     import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+    import { PUBLIC_MAPS_APIKEY } from '$env/static/public';
+    import { loadScript } from '$lib/utils.js'
 
 	import Gallery from '$lib/components/Gallery.svelte';
 
     export let data;
     
     let event = data.event;
-
     let photos = [
         { url: 'https://picsum.photos/seed/picsum/600/400', thumb: 'https://picsum.photos/seed/picsum/200/200', width: 600, height: 400 },
         { url: 'https://picsum.photos/seed/picsum/550/400', thumb: 'https://picsum.photos/seed/picsum/200/200', width: 550, height: 400 },
@@ -19,19 +20,25 @@
     ];
 
     onMount(() => {
+        console.log(event);
         // console.log('loading maps');
-        // loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyAHqkGVBJA2gNLXhf4bxKewwwJVcVY7LFI&loading=async').then(function() {
-        //     var map = new google.maps.Map(document.getElementById("googleMap"), {
-        //         center: new google.maps.LatLng(50.361005, 16.0861051),
-        //         zoom: 12
-        //     });
-        //     var marker = new google.maps.Marker({
-        //         position: new google.maps.LatLng(50.361005, 16.0861051),
-        //         map: map
-        //     });
-        //     console.log('map loaded');
-        // }).catch(() => {});
+        loadScript(`https://maps.googleapis.com/maps/api/js?key=${PUBLIC_MAPS_APIKEY}&loading=async`).then(initMap).catch((err) => console.log('MAP LOAD FAILED', err));
     });
+
+    function initMap() {
+        if (typeof(google.maps?.Map) !== 'function')
+            return setTimeout(initMap, 500);
+
+        var map = new google.maps.Map(document.getElementById("googleMap"), {
+            center: new google.maps.LatLng(50.361005, 16.0861051),
+            zoom: 12
+        });
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(50.361005, 16.0861051),
+            map: map
+        });
+        console.log('map loaded');
+    };
 </script>
 
 <div class="p-8">

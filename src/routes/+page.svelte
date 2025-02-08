@@ -8,15 +8,27 @@
 
     let form_visible = false;
     
+    const events_today = writable([]);
     const events_upcomming = writable([]);
     const events_old = writable([]);
 
     const fetchEvents = async () => {
         const res = await fetch('/events', { headers: { Accept: 'application/json' }});
         const data = await res.json();
+        var dt = new Date();
         //console.log(data.events);
-        events_upcomming.set(data.events.filter(ev => new Date(ev.date) > new Date()));
-        events_old.set(data.events.filter(ev => new Date(ev.date) < new Date()));
+
+        events_today.set(data.events.filter(ev => new Date(ev.date).toDateString() === dt.toDateString()));
+
+        events_upcomming.set(data.events.filter(ev => {
+            var ev_dt = new Date(ev.date);
+            return ev_dt > dt && ev_dt.toDateString() !== dt.toDateString();
+        }));
+
+        events_old.set(data.events.filter(ev => {
+            var ev_dt = new Date(ev.date);
+            return ev_dt < dt && ev_dt.toDateString() !== dt.toDateString();
+        }));
     };
 
     onMount(() => {
@@ -88,36 +100,58 @@
             {/if}
         </div>
         {/if}
-        <h2 class="text-2xl tracking-tight text-gray-400 text-center">Nadcházející události</h2>
-        {#each $events_upcomming as event}
-        <a href="/events/{event.id}" class="my-4 w-full shadow-lg rounded-xl p-4 bg-white hover:shadow-xl">
-            <div class="flex justify-between w-full">
-                <h2 class="text-3xl font-bold tracking-tight text-gray-700 ">{event.title}</h2>
-                <div class="">
-                    <h3><span class="text-gray-500">Pořádá:</span>&nbsp;<span class="text-xl font-bold text-gray-700">{event.organizer}</span></h3>
+        {#if $events_today.length}
+            <h2 class="text-2xl tracking-tight text-gray-400 text-center">Dnešní události</h2>
+            {#each $events_today as event}
+            <a href="/events/{event.id}" class="my-4 w-full shadow-lg rounded-xl p-4 bg-white hover:shadow-xl">
+                <div class="flex justify-between w-full">
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-700">{event.title}</h2>
+                    <div class="">
+                        <h3><span class="text-gray-500">Pořádá:</span>&nbsp;<span class="text-xl font-bold text-gray-700">{event.organizer}</span></h3>
+                    </div>
                 </div>
-            </div>
-            <div class="flex justify-between items-center text-gray-500">
-                <div><i class="fa-solid fa-location-dot mr-2"></i>{event.location} | <i class="fa-regular fa-calendar mr-2"></i>{event.date}</div>
-                <div><button class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-primary-500 hover:text-white"><i class="fa-solid fa-arrow-right mr-2"></i>Otevřít</button></div>
-            </div>
-        </a>
-        {/each}
-        <br>
-        <h2 class="text-2xl tracking-tight text-gray-400 text-center">Starší události</h2>
-        {#each $events_old as event}
-        <a href="/events/{event.id}" class="my-4 w-full shadow-lg rounded-xl p-4 bg-white hover:shadow-xl">
-            <div class="flex justify-between w-full">
-                <h2 class="text-3xl font-bold tracking-tight text-gray-700">{event.title}</h2>
-                <div class="">
-                    <h3><span class="text-gray-500">Pořádá:</span>&nbsp;<span class="text-xl font-bold text-gray-700">{event.organizer}</span></h3>
+                <div class="flex justify-between items-center text-gray-500">
+                    <div><i class="fa-solid fa-location-dot mr-2"></i>{event.location} | <i class="fa-regular fa-calendar mr-2"></i>{event.date}</div>
+                    <div><button class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-primary-500 hover:text-white"><i class="fa-solid fa-arrow-right mr-2"></i>Otevřít</button></div>
                 </div>
-            </div>
-            <div class="flex justify-between items-center text-gray-500">
-                <div><i class="fa-solid fa-location-dot mr-2"></i>{event.location} | <i class="fa-regular fa-calendar mr-2"></i>{event.date}</div>
-                <div><button class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-primary-500 hover:text-white"><i class="fa-solid fa-arrow-right mr-2"></i>Otevřít</button></div>
-            </div>
-        </a>
-        {/each}
+            </a>
+            {/each}
+            <br>
+        {/if}
+        {#if $events_upcomming.length}
+            <h2 class="text-2xl tracking-tight text-gray-400 text-center">Nadcházející události</h2>
+            {#each $events_upcomming as event}
+            <a href="/events/{event.id}" class="my-4 w-full shadow-lg rounded-xl p-4 bg-white hover:shadow-xl">
+                <div class="flex justify-between w-full">
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-700 ">{event.title}</h2>
+                    <div class="">
+                        <h3><span class="text-gray-500">Pořádá:</span>&nbsp;<span class="text-xl font-bold text-gray-700">{event.organizer}</span></h3>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-gray-500">
+                    <div><i class="fa-solid fa-location-dot mr-2"></i>{event.location} | <i class="fa-regular fa-calendar mr-2"></i>{event.date}</div>
+                    <div><button class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-primary-500 hover:text-white"><i class="fa-solid fa-arrow-right mr-2"></i>Otevřít</button></div>
+                </div>
+            </a>
+            {/each}
+            <br>
+        {/if}
+        {#if $events_old.length}
+            <h2 class="text-2xl tracking-tight text-gray-400 text-center">Starší události</h2>
+            {#each $events_old as event}
+            <a href="/events/{event.id}" class="my-4 w-full shadow-lg rounded-xl p-4 bg-white hover:shadow-xl">
+                <div class="flex justify-between w-full">
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-700">{event.title}</h2>
+                    <div class="">
+                        <h3><span class="text-gray-500">Pořádá:</span>&nbsp;<span class="text-xl font-bold text-gray-700">{event.organizer}</span></h3>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-gray-500">
+                    <div><i class="fa-solid fa-location-dot mr-2"></i>{event.location} | <i class="fa-regular fa-calendar mr-2"></i>{event.date}</div>
+                    <div><button class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-primary-500 hover:text-white"><i class="fa-solid fa-arrow-right mr-2"></i>Otevřít</button></div>
+                </div>
+            </a>
+            {/each}
+        {/if}
     </div>
 </div>

@@ -30,8 +30,8 @@ export const getSettings = async (event) => {
     return {  sports: [], ...settings };
 }
 
-export const upsertSettings = async (settings) => {
-    if (!settings?.event) {
+export const upsertSettings = async (event, settings) => {
+    if (!event) {
         console.log('upsertSettings failed: missing event');
         return null;
     }

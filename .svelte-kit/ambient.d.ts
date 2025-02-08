@@ -26,70 +26,40 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const ORIGIN: string;
 	export const AUTH_SECRET: string;
 	export const MONGO_URL: string;
-	export const MANPATH: string;
-	export const TERM_PROGRAM: string;
-	export const NODE: string;
-	export const INIT_CWD: string;
-	export const TERM: string;
-	export const SHELL: string;
-	export const HOMEBREW_REPOSITORY: string;
-	export const TMPDIR: string;
-	export const npm_config_global_prefix: string;
-	export const TERM_PROGRAM_VERSION: string;
-	export const ZDOTDIR: string;
-	export const ORIGINAL_XDG_CURRENT_DESKTOP: string;
-	export const MallocNanoZone: string;
-	export const COLOR: string;
-	export const npm_config_noproxy: string;
-	export const PICO_SDK_DIR: string;
-	export const npm_config_local_prefix: string;
-	export const USER: string;
-	export const COMMAND_MODE: string;
-	export const npm_config_globalconfig: string;
-	export const SSH_AUTH_SOCK: string;
-	export const __CF_USER_TEXT_ENCODING: string;
-	export const npm_execpath: string;
-	export const MODDABLE: string;
-	export const PICO_GCC_ROOT: string;
-	export const PATH: string;
-	export const npm_package_json: string;
-	export const npm_config_engine_strict: string;
-	export const _: string;
-	export const npm_config_userconfig: string;
-	export const npm_config_init_module: string;
-	export const USER_ZDOTDIR: string;
-	export const __CFBundleIdentifier: string;
-	export const npm_command: string;
-	export const PWD: string;
-	export const npm_lifecycle_event: string;
-	export const EDITOR: string;
-	export const npm_package_name: string;
-	export const LANG: string;
-	export const npm_config_npm_version: string;
-	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
-	export const XPC_FLAGS: string;
-	export const npm_config_node_gyp: string;
-	export const npm_package_version: string;
-	export const XPC_SERVICE_NAME: string;
-	export const VSCODE_INJECTION: string;
-	export const SHLVL: string;
-	export const HOME: string;
-	export const VSCODE_GIT_ASKPASS_MAIN: string;
-	export const HOMEBREW_PREFIX: string;
-	export const npm_config_cache: string;
-	export const LOGNAME: string;
-	export const npm_lifecycle_script: string;
-	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const npm_config_user_agent: string;
-	export const VSCODE_GIT_ASKPASS_NODE: string;
-	export const GIT_ASKPASS: string;
-	export const INFOPATH: string;
-	export const HOMEBREW_CELLAR: string;
+	export const NODE_VERSION: string;
+	export const HOSTNAME: string;
+	export const YARN_VERSION: string;
 	export const npm_node_execpath: string;
+	export const SHLVL: string;
+	export const npm_config_noproxy: string;
+	export const HOME: string;
+	export const npm_package_json: string;
+	export const npm_config_userconfig: string;
+	export const npm_config_local_prefix: string;
+	export const npm_config_engine_strict: string;
+	export const COLOR: string;
 	export const npm_config_prefix: string;
-	export const COLORTERM: string;
+	export const npm_config_npm_version: string;
+	export const npm_config_cache: string;
+	export const npm_config_node_gyp: string;
+	export const PATH: string;
+	export const NODE: string;
+	export const npm_package_name: string;
+	export const npm_lifecycle_script: string;
+	export const npm_package_version: string;
+	export const npm_lifecycle_event: string;
+	export const npm_config_globalconfig: string;
+	export const npm_config_init_module: string;
+	export const PWD: string;
+	export const npm_execpath: string;
+	export const npm_config_global_prefix: string;
+	export const npm_command: string;
+	export const INIT_CWD: string;
+	export const EDITOR: string;
 	export const NODE_ENV: string;
 }
 
@@ -103,7 +73,7 @@ declare module '$env/static/private' {
  * ```
  */
 declare module '$env/static/public' {
-	
+	export const PUBLIC_MAPS_APIKEY: string;
 }
 
 /**
@@ -122,70 +92,40 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		ORIGIN: string;
 		AUTH_SECRET: string;
 		MONGO_URL: string;
-		MANPATH: string;
-		TERM_PROGRAM: string;
-		NODE: string;
-		INIT_CWD: string;
-		TERM: string;
-		SHELL: string;
-		HOMEBREW_REPOSITORY: string;
-		TMPDIR: string;
-		npm_config_global_prefix: string;
-		TERM_PROGRAM_VERSION: string;
-		ZDOTDIR: string;
-		ORIGINAL_XDG_CURRENT_DESKTOP: string;
-		MallocNanoZone: string;
-		COLOR: string;
-		npm_config_noproxy: string;
-		PICO_SDK_DIR: string;
-		npm_config_local_prefix: string;
-		USER: string;
-		COMMAND_MODE: string;
-		npm_config_globalconfig: string;
-		SSH_AUTH_SOCK: string;
-		__CF_USER_TEXT_ENCODING: string;
-		npm_execpath: string;
-		MODDABLE: string;
-		PICO_GCC_ROOT: string;
-		PATH: string;
-		npm_package_json: string;
-		npm_config_engine_strict: string;
-		_: string;
-		npm_config_userconfig: string;
-		npm_config_init_module: string;
-		USER_ZDOTDIR: string;
-		__CFBundleIdentifier: string;
-		npm_command: string;
-		PWD: string;
-		npm_lifecycle_event: string;
-		EDITOR: string;
-		npm_package_name: string;
-		LANG: string;
-		npm_config_npm_version: string;
-		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
-		XPC_FLAGS: string;
-		npm_config_node_gyp: string;
-		npm_package_version: string;
-		XPC_SERVICE_NAME: string;
-		VSCODE_INJECTION: string;
-		SHLVL: string;
-		HOME: string;
-		VSCODE_GIT_ASKPASS_MAIN: string;
-		HOMEBREW_PREFIX: string;
-		npm_config_cache: string;
-		LOGNAME: string;
-		npm_lifecycle_script: string;
-		VSCODE_GIT_IPC_HANDLE: string;
 		npm_config_user_agent: string;
-		VSCODE_GIT_ASKPASS_NODE: string;
-		GIT_ASKPASS: string;
-		INFOPATH: string;
-		HOMEBREW_CELLAR: string;
+		NODE_VERSION: string;
+		HOSTNAME: string;
+		YARN_VERSION: string;
 		npm_node_execpath: string;
+		SHLVL: string;
+		npm_config_noproxy: string;
+		HOME: string;
+		npm_package_json: string;
+		npm_config_userconfig: string;
+		npm_config_local_prefix: string;
+		npm_config_engine_strict: string;
+		COLOR: string;
 		npm_config_prefix: string;
-		COLORTERM: string;
+		npm_config_npm_version: string;
+		npm_config_cache: string;
+		npm_config_node_gyp: string;
+		PATH: string;
+		NODE: string;
+		npm_package_name: string;
+		npm_lifecycle_script: string;
+		npm_package_version: string;
+		npm_lifecycle_event: string;
+		npm_config_globalconfig: string;
+		npm_config_init_module: string;
+		PWD: string;
+		npm_execpath: string;
+		npm_config_global_prefix: string;
+		npm_command: string;
+		INIT_CWD: string;
+		EDITOR: string;
 		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
@@ -206,6 +146,7 @@ declare module '$env/dynamic/private' {
  */
 declare module '$env/dynamic/public' {
 	export const env: {
+		PUBLIC_MAPS_APIKEY: string;
 		[key: `PUBLIC_${string}`]: string | undefined;
 	}
 }

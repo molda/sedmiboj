@@ -8,6 +8,7 @@
 
     function save() {
         console.log('save', settings);
+		settings.event = $page.params.event;
         fetch(`/api/events/${$page.params.event}/settings`, {
             method: 'POST',
             headers: {

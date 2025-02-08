@@ -39,11 +39,11 @@ const nextMatchForWinner = {
     27: 30,
     28: 30,
     // 4th round
-    29: 31,
-    30: 31,
+    29: 32,
+    30: 32,
     // 5th round
-    31: 32
-    
+    //31: 32
+    // 6th round
 };
 
 /**
@@ -58,7 +58,7 @@ const nextMatchForWinner = {
  *      score1: number,
  *      score2: number,
  *      winner: string, // team1|team2
- *      state: string,  // active|finished|cancelled
+ *      status: string,  // active|closed|cancelled
  * }
  */
 
@@ -74,7 +74,9 @@ export const initMatches = async (event) => {
     const matches = await initializeMatches(event, teams, settings.sports);
 
     settings.initialized = true;
-    await upsertSettings(settings);
+    await upsertSettings(event, settings);
+
+    console.log('MATCHES', matches);
     // insert data into MongoDB
     const result = await db.collection('matches').insertMany(matches);
     // return JSON response
@@ -99,6 +101,13 @@ export const upsertMatch = async (data) => {
         var filter = { event: data.event, sport: data.sport, match: nextMatch };
         var winner_result = await db.collection('matches').updateOne({ $and: [ filter ] }, { $set: { [data.match % 2 == 0 ? 'team2' : 'team1']: data.winner } });
         console.log('upsertMatch, update next match result', { filter, winner_result });
+    }
+    // the loser in round 4 plays match 31
+    if (data.match === 29 || data.match === 30) {
+        console.log('Match 29 nebo 30', { data });
+        var result = await db.collection('matches').updateOne({ $and: [ { event: data.event, sport: data.sport, match: 31 } ] }, { $set: { [data.match % 2 == 0 ? 'team2' : 'team1']: data.team1 === data.winner ? data.team2 : data.team1 } });
+        var result_match = await db.collection('matches').find({ $and: [ { event: data.event, sport: data.sport, match: 31 } ] }).toArray();
+        console.log('UPDATING 3-4', result, result_match);
     }
     // return JSON response
     delete data._id;

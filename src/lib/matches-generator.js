@@ -65,10 +65,13 @@ const init2 = (event, teams, sport) => {
 
 	for (let i = 28; i < 30; i++)
 		matches.push({ event, sport, team1: '', team2: '', id: 'match' + (i + 1), match: (i + 1), score1: 0, score2: 0, round: 4, winner: '', status: '' });
+	
+	// 3rd/4th place
+	matches.push({ event, sport, team1: '', team2: '', id: 'match31', match: 31, score1: 0, score2: 0, round: 5, winner: '', status: '' });
 
-	for (let i = 30; i < 31; i++)
-		matches.push({ event, sport, team1: '', team2: '', id: 'match' + (i + 1), match: (i + 1), score1: 0, score2: 0, round: 5, winner: '', status: '' });
+	// 1st/2nd place
+	matches.push({ event, sport, team1: '', team2: '', id: 'match32', match: 32, score1: 0, score2: 0, round: 6, winner: '', status: '' });
 
-	matches[0].status = 'active';
+	//matches[0].status = 'active';
 	return matches;
 };

@@ -15,3 +15,5 @@ COPY . .
 #CMD [ "npm", "start" ]
 #CMD node index.js > logs/debug.log
 CMD npm run dev
+
+#CMD node index.js
