@@ -8,5 +8,7 @@
 
 <main class="grid grid-cols-[56px_1fr] w-screen h-screen">
 	<AppMenu></AppMenu>
-	<slot />
+	<div class="h-screen overflow-y-auto">
+		<slot />
+	</div>
 </main>

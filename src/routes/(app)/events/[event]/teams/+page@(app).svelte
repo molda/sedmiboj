@@ -1,26 +1,23 @@
 <script>
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
     import { fly, fade } from 'svelte/transition';
 	import { enhance, applyAction } from '$app/forms';
 	import { writable } from 'svelte/store';
 	import Confirm from '$lib/components/Confirm.svelte';
 	import { onMount } from 'svelte';
-
+	import Loading from '$lib/components/Loading.svelte';
 
 	export let data;
 
 	let input_ref = null;
 	let button_ref = null;
+	let isLoading = false;
 
 
     let teams = data.teams;
 	let team = writable({});
-	//console.log('Teams:', teams);
 	let form_visible = false;
 	let form_action = 'create';
-
-	console.log('PAGE', $page.data);
 
 	async function edit_team(id) {
 		var t = teams.find(t => t.id === id);
@@ -32,28 +29,34 @@
 	}
 
 	async function delete_team(id) {
+		isLoading = true;
 		var t = teams.find(t => t.id === id);
 		//console.log('delete_team', t);
 		const res = await fetch(`/api/events/${$page.params.event}/teams/${id}`, { method: 'DELETE' });
 		const data = await res.json();
 		//console.log('delete_team', data);
 		await fetchTeams();
+		isLoading = false;
 	}
 
 	async function fetchTeams() {
+		isLoading = true;
 		const res = await fetch(`/api/events/${$page.params.event}/teams`, { headers: { Accept: 'application/json' }});
 		const data = await res.json();
-		//console.log('fetchTeams', data.teams);
+		console.log('fetchTeams', data.teams);
 		teams = data;
+		isLoading = false;
 	}
 
 	async function prepare_matches() {
+		isLoading = true;
 		const res = await fetch(`/api/events/${$page.params.event}/matches/init`);
 		if (res.ok) {
 			location.href = `/events/${$page.params.event}/matches`;
 		} else {
 			console.error('prepare_matches failed', res);
 		}
+		isLoading = false;
 	};
 
 	onMount(() => {
@@ -61,7 +64,8 @@
 	});
 </script>
 
-<div class="p-4 mx-auto">
+<div class="max-w-[900px] p-4 mx-auto">
+	<Loading visible={isLoading}/>
 	<div class="flex justify-between mb-2">
 		<h1 class="text-4xl font-bold mb-2">Týmy</h1>
 		{#if $page.data.session?.user}
@@ -131,19 +135,22 @@
 		{/if}
 	</div>
 	{/if}
-	<div class="w-[900px] rounded-xl overflow-hidden">
-		<div class="grid grid-cols-[40px_minmax(200px,_1fr)_minmax(200px,_1fr)_80px_80px]">
+	<div class="max-w-[900px] rounded-xl overflow-hidden">
+		<div class={ `grid ${$page.data.session?.user ? 'grid-cols-[40px_minmax(200px,_1fr)_minmax(200px,_1fr)_80px_80px]' : 'grid-cols-[40px_minmax(200px,_1fr)_minmax(200px,_1fr)]'}` }>
 			<div class="flex items-center justify-center h-10 border-bottom bg-primary-200 b">#</div>
 			<div class="flex items-center justify-center h-10 border-bottom bg-primary-200 b">Jméno týmu</div>
 			<div class="flex items-center justify-center h-10 border-bottom bg-primary-200 b">Jména hráčů</div>
+			{#if $page.data.session?.user}
 			<div class="flex items-center justify-center h-10 border-bottom bg-primary-200 b">Zaplaceno</div>
 			<div class="flex items-center justify-center h-10 border-bottom bg-primary-200 radius-rt b">&nbsp;</div>
+			{/if}
 		</div>
 		{#each teams as team, idx}
-		<div class="grid grid-cols-[40px_minmax(200px,_1fr)_minmax(200px,_1fr)_80px_80px] bg-primary-100 pointer">
+		<div class={ `grid bg-primary-100 pointer ${$page.data.session?.user ? 'grid-cols-[40px_minmax(200px,_1fr)_minmax(200px,_1fr)_80px_80px]' : 'grid-cols-[40px_minmax(200px,_1fr)_minmax(200px,_1fr)]' }` }>
 			<div class="flex items-center justify-center h-8 border-bottom">{idx + 1}</div>
 			<div class="flex items-center justify-center h-8 border-bottom">{team.name}</div>
 			<div class="flex items-center justify-center h-8 border-bottom">{team.player1} | {team.player2}</div>
+			{#if $page.data.session?.user}
 			<div class="flex items-center justify-center h-8 border-bottom"><input type="checkbox" checked={team.paid} disabled="disabled"></div>
 			<div class="flex items-center justify-center h-8 border-bottom">
 				<button on:click={() => edit_team(team.id)}><i class="fa-solid fa-pencil mr-4"></i></button>
@@ -153,6 +160,7 @@
 					<span slot="description">Smazání týmu nelze vrátit!</span>
 				</Confirm>
 			</div>
+			{/if}
 		</div>
 		{/each}
 		<div class="radius-lb radius-rb h-2 bg-primary-200"></div>

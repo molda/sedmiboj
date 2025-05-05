@@ -17,7 +17,7 @@ socket.on('disconnect', () => {
 });
 
 socket.on('message', (data) => {
-    console.log('Message received:', data);
+    //console.log('Message received:', data);
     messages.update((msgs) => [...msgs, data]);
     message.set(data);
 });

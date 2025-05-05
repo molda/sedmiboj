@@ -67,6 +67,8 @@
                             await fetchEvents();
                             form_visible = false;
                             await update();
+
+                            goto('/events/' + result.data.event.id + '/settings');
                         };
                     }}
                     >

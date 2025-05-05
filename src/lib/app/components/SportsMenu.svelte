@@ -1,7 +1,6 @@
 <script>
     import { page } from '$app/stores';
     import { treeStore } from '$lib/stores';
-
     let selected = 'tenis';
 
     treeStore.subscribe(value => {

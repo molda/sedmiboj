@@ -1,7 +1,7 @@
 import { getDB } from '$db/mongo';
 import { queryTeams } from '$db/teams';
 import { getSettings, upsertSettings } from '$db/settings';
-import { initializeMatches } from '$lib/matches-generator';
+import { generateMatches } from '$lib/generator';
 
 const db = getDB();
 
@@ -59,6 +59,7 @@ const nextMatchForWinner = {
  *      score2: number,
  *      winner: string, // team1|team2
  *      status: string,  // active|closed|cancelled
+ *      preliminary: boolean,  // true if match is preliminary
  * }
  */
 
@@ -71,7 +72,17 @@ export const initMatches = async (event) => {
     var teams = await queryTeams({ event });
     var settings = await getSettings(event);
 
-    const matches = await initializeMatches(event, teams, settings.sports);
+    if (!teams || !teams.length)
+        return { error: 'E_MATCHES_INIT_NO_TEAMS' };
+
+    if (!settings || settings.initialized)
+        return { error: 'E_MATCHES_INIT_ALREADY_INITIALIZED' };
+
+    if (!settings.sports?.length)
+        return { error: 'E_MATCHES_INIT_NO_SPORTS' };
+
+    console.log('Teams', teams.length, settings);
+    const matches = await generateMatches(event, teams, settings.sports);
 
     settings.initialized = true;
     await upsertSettings(event, settings);
