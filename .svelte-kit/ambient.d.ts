@@ -27,6 +27,7 @@
  */
 declare module '$env/static/private' {
 	export const ORIGIN: string;
+	export const SECRET_KEY: string;
 	export const AUTH_SECRET: string;
 	export const MONGO_URL: string;
 	export const npm_config_user_agent: string;
@@ -93,6 +94,7 @@ declare module '$env/static/public' {
 declare module '$env/dynamic/private' {
 	export const env: {
 		ORIGIN: string;
+		SECRET_KEY: string;
 		AUTH_SECRET: string;
 		MONGO_URL: string;
 		npm_config_user_agent: string;

@@ -57,8 +57,10 @@
                 let allmatches = data2.matches.filter(match => match.sport === selected);
                 pre_matches = fillEmptyPreliminary(allmatches.filter(match => match.preliminary));
                 matches = allmatches.filter(match => !match.preliminary);
-                //console.log('LoadedMatches', matches);
-                pre_matches_visible = pre_matches.length > 0 && pre_matches.some(match => match.status !== 'completed');
+                console.log('LoadedMatches', matches);
+                console.log('LoadedMatches: preliminary', pre_matches);
+                pre_matches_visible = pre_matches.length > 0 && pre_matches.some(match => match && match.status !== 'completed');
+                console.log('pre_matches_visible', pre_matches_visible);
                 loading(false);
 			});
 	}
@@ -105,7 +107,7 @@
         fetch(`/api/events/${$page.params.event}/matches/${$match.id}/winner`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ winner: id, sport: $match.sport, match: $match.match, status: 'closed', team1: $match.team1, team2: $match.team2 })
+            body: JSON.stringify({ winner: id, sport: $match.sport, match: $match.match, status: 'closed', team1: $match.team1, team2: $match.team2, preliminary: $match.preliminary })
         })
         .then(res => res.json())
         .then(data => {
@@ -174,170 +176,172 @@
 </script>
 
 <!-- svelte-ignore a11y-interactive-supports-focus -->
-<div class="w-full relative">
+<div class="h-screen w-full relative">
 	<Loading visible={isLoading}/>
     <SportsMenu></SportsMenu>
-    {#if matches.length > 0}
-    <div class="flex flex-row p-2">
-        {#if pre_matches.length > 0 && pre_matches_visible}
-        <div class="flex flex-row w-[18%]">
-            <div class="flex flex-col w-full">
-                {#each pre_matches as match}
-                {#if match}
-                <div class="flex mx-2">
-                    <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
-                        <div class="flex flex-col w-full">
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team1)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team2)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+    <div class="flex items-center h-screen w-full">
+        {#if matches.length > 0}
+        <div class="flex flex-row p-2 w-full">
+            {#if pre_matches.length > 0 && pre_matches_visible}
+            <div class="flex flex-row w-[18%]">
+                <div class="flex flex-col w-full">
+                    {#each pre_matches as match}
+                    {#if match}
+                    <div class="flex mx-2">
+                        <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
+                            <div class="flex flex-col w-full">
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team1)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team2)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {:else}
+                    <div class="flex mx-2 h-[66px]"></div>
+                    {/if}
+                    {/each}
                 </div>
-                {:else}
-                <div class="flex mx-2 h-[66px]"></div>
-                {/if}
-                {/each}
             </div>
-        </div>
-        {/if}
-        {#if pre_matches.length > 0}
-        <div class="w-[2%] flex justify-center items-center cursor-pointer bg-slate-100 rounded-xl" on:click={() => { console.log('Prematch click'); pre_matches_visible = !pre_matches_visible; } }>
-            {#if pre_matches_visible}
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z"/></svg>
-            {:else}
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.58L13.17 12L8.59 7.41L10 6l6 6l-6 6z"/></svg>
             {/if}
+            {#if pre_matches.length > 0}
+            <div class="w-[2%] flex justify-center items-center cursor-pointer bg-slate-100 rounded-xl" on:click={() => { console.log('Prematch click'); pre_matches_visible = !pre_matches_visible; } }>
+                {#if pre_matches_visible}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z"/></svg>
+                {:else}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.58L13.17 12L8.59 7.41L10 6l6 6l-6 6z"/></svg>
+                {/if}
+            </div>
+            {/if}
+            <div class="flex flex-row flex-grow">
+                <div class="flex flex-col w-[20%] justify-between">
+                    {#each matches as match}
+                    {#if match && match.round === 1 }
+                    <div class="flex mx-2">
+                        <div class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
+                            <div class="flex flex-col w-full">
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team1)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team2)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                    {/each}
+                </div>
+                <div class="flex flex-col w-[20%] justify-around">
+                    {#each matches as match}
+                    {#if match && match.round === 2 }
+                    <div class="flex mx-2">
+                        <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
+                            <div class="flex flex-col w-full">
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team1)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team2)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                    {/each}
+                </div>
+                <div class="flex flex-col w-[20%] justify-around">
+                    {#each matches as match}
+                    {#if match && match.round === 3 }
+                    <div class="flex mx-2">
+                        <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
+                            <div class="flex flex-col w-full">
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team1)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team2)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                    {/each}
+                </div>
+                <div class="flex flex-col w-[20%] justify-around">
+                    {#each matches as match}
+                    {#if match && match.round === 4 }
+                    <div class="flex mx-2">
+                        <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
+                            <div class="flex flex-col w-full">
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team1)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team2)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                    {/each}
+                </div>
+                <div class="flex flex-col w-[20%] justify-around relative">
+                    {#each matches as match}
+                    {#if match && match.match === 31}
+                    <div class="flex mx-2 absolute" style="left:-90%;width:calc(100% - 64px);">
+                        <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
+                            <div class="flex flex-col w-full">
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team1)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team2)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                    {#if match && match.match === 32 }
+                    <div class="flex mx-2">
+                        <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
+                            <div class="flex flex-col w-full">
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team1)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                                <div class="flex justify-between align-center">
+                                    <div class="font-sm">{@html teamName(match.team2)}</div>
+                                    <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                    {/each}
+                </div>
+            </div>
+        </div>
+        {:else}
+        <div class="w-full flex justify-center items-center">
+            <h2 class="text-gray-400 text-xl">Tady není nic k vidění. Postupujte dál, prosím.</h2>
         </div>
         {/if}
-        <div class="flex flex-row flex-grow">
-            <div class="flex flex-col w-[20%] justify-between">
-                {#each matches as match}
-                {#if match && match.round === 1 }
-                <div class="flex mx-2">
-                    <div class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
-                        <div class="flex flex-col w-full">
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team1)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team2)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/if}
-                {/each}
-            </div>
-            <div class="flex flex-col w-[20%] justify-around">
-                {#each matches as match}
-                {#if match && match.round === 2 }
-                <div class="flex mx-2">
-                    <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
-                        <div class="flex flex-col w-full">
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team1)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team2)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/if}
-                {/each}
-            </div>
-            <div class="flex flex-col w-[20%] justify-around">
-                {#each matches as match}
-                {#if match && match.round === 3 }
-                <div class="flex mx-2">
-                    <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
-                        <div class="flex flex-col w-full">
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team1)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team2)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/if}
-                {/each}
-            </div>
-            <div class="flex flex-col w-[20%] justify-around">
-                {#each matches as match}
-                {#if match && match.round === 4 }
-                <div class="flex mx-2">
-                    <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
-                        <div class="flex flex-col w-full">
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team1)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team2)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/if}
-                {/each}
-            </div>
-            <div class="flex flex-col w-[20%] justify-around relative">
-                {#each matches as match}
-                {#if match && match.round === 5 }
-                <div class="flex mx-2 absolute" style="left:-90%;width:calc(100% - 64px);">
-                    <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
-                        <div class="flex flex-col w-full">
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team1)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team2)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/if}
-                {#if match && match.round === 6 }
-                <div class="flex mx-2">
-                    <div  class={ `shadow border border-slate-200 w-full px-2 py-1 rounded-xl pointer mb-2 flex exec ` + classes(match.status) } on:click={ updateMatch(match.id) } role="button">
-                        <div class="flex flex-col w-full">
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team1)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team1}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                            <div class="flex justify-between align-center">
-                                <div class="font-sm">{@html teamName(match.team2)}</div>
-                                <div class="flex items-center">{#if match.winner && match.winner === match.team2}<img src="/svgs/cup.svg" alt="cup.svg">{/if}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/if}
-                {/each}
-            </div>
-        </div>
     </div>
-    {:else}
-    <div class="w-full flex justify-center items-center">
-        <h2 class="text-gray-400 text-xl">Tady není nic k vidění. Postupujte dál, prosím.</h2>
-    </div>
-    {/if}
 </div>
 
 {#if form_visible}
@@ -347,7 +351,7 @@
             <button class="inline-flex justify-center items-center rounded-lg text-sm font-semibold py-3 px-4 bg-primary-700 text-white hover:bg-primary-600 shadow-2xl" class:hidden={ $match.status === 'active' || $match.status === 'closed' || matches.find(m => m.status === 'active') } on:click={ () => startMatch($match) }>Zahájit zápas</button>
             <div class="flex items-center my-4">
                 <div class="flex-grow border-t border-gray-400"></div>
-                <span class="mx-4 text-gray-600">NEBO ZVOLTE VÍŤEZE</span>
+                <span class="mx-4 text-gray-600">{#if $match.status !== 'active' && $match.status !== 'closed' && !matches.find(m => m.status === 'active') }NEBO {/if}ZVOLTE VÍŤEZE</span>
                 <div class="flex-grow border-t border-gray-400"></div>
             </div>
             <button class="inline-flex justify-center items-center rounded-lg text-sm font-semibold py-3 px-4 bg-primary-700 text-white hover:bg-primary-600 shadow-2xl mb-2" on:click={ () => winner($match.team1) }>{$match.team1_name}</button>

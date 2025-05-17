@@ -7,8 +7,8 @@
 	export let data;
 
     let rankings = data.rankings;
-	let orderby = 'wins'; // total, wins
-	let orderbyTitle = 'bodů'; // bodů, výher
+	let orderby = 'total'; // total, wins
+	let orderbyTitle = 'výher'; // bodů, výher
 
 	function refresh() {
 		fetch(`/api/events/${$page.params.event}/rankings?orderby=${orderby}`, { headers: { Accept: 'application/json' }})

@@ -17,9 +17,9 @@ export default defineConfig({
 				console.log('WS server started');
 
 				io.on('connection', (socket) => {
-					console.log('Client connected');
+					console.log('[vite.config.js](Socket.io) Client connected');
 					socket.on('disconnect', () => {
-						console.log('Client disconnected');
+						console.log('[vite.config.js](Socket.io) Client disconnected');
 					});
 
 					socket.on('message', (data) => {

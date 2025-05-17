@@ -54,8 +54,8 @@
     </div>
     <div class="max-w-screen-lg mx-auto mb-10">
         <div class="max-w-screen-lg">
-            <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolores recusandae natus beatae! Ratione, ex ullam, excepturi adipisci laudantium consectetur ipsa ab a assumenda est tempore quae minus quos. Reiciendis, id.</p>
-            <p class="text-right text-lg">Těší se na Vás <b>TJ Nahořany</b></p>
+            <p class="mb-4">{event.description}</p>
+            <p class="text-right text-lg">Těší se na Vás <b>{event.organizer}</b></p>
         </div>
     </div>
     <div class="max-w-screen-lg mx-auto mb-10">

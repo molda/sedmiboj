@@ -7,40 +7,58 @@ const db = getDB();
 
 // 
 const nextMatchForWinner = {
+    // preliminary matches
+    '-0': 1,
+    '-1': 2,
+    '-2': 3,
+    '-3': 4,
+    '-4': 5,
+    '-5': 6,
+    '-6': 7,
+    '-7': 8,
+    '-8': 9,
+    '-9': 10,
+    '-10': 11,
+    '-11': 12,
+    '-12': 13,
+    '-13': 14,
+    '-14': 15,
+    '-15': 16,
+    '-16': 17,
     // 1st round
-    1: 17,
-    2: 17,
-    3: 18,
-    4: 18,
-    5: 19,
-    6: 19,
-    7: 20,
-    8: 20,
-    9: 21,
-    10: 21,
-    11: 22,
-    12: 22,
-    13: 23,
-    14: 23,
-    15: 24,
-    16: 24,
+    '1': 17,
+    '2': 17,
+    '3': 18,
+    '4': 18,
+    '5': 19,
+    '6': 19,
+    '7': 20,
+    '8': 20,
+    '9': 21,
+    '10': 21,
+    '11': 22,
+    '12': 22,
+    '13': 23,
+    '14': 23,
+    '15': 24,
+    '16': 24,
     // 2nd round
-    17: 25,
-    18: 25,
-    19: 26,
-    20: 26,
-    21: 27,
-    22: 27,
-    23: 28,
-    24: 28,
+    '17': 25,
+    '18': 25,
+    '19': 26,
+    '20': 26,
+    '21': 27,
+    '22': 27,
+    '23': 28,
+    '24': 28,
     // 3rd round
-    25: 29,
-    26: 29,
-    27: 30,
-    28: 30,
+    '25': 29,
+    '26': 29,
+    '27': 30,
+    '28': 30,
     // 4th round
-    29: 32,
-    30: 32,
+    '29': 32,
+    '30': 32,
     // 5th round
     //31: 32
     // 6th round
@@ -94,32 +112,37 @@ export const initMatches = async (event) => {
     return result;
 }
 
-export const upsertMatch = async (data) => {
-    var isnew = !data.id;
-    var result = null;
-    //console.log('upsertMatch, isnew:', isnew, data);
-    if (isnew) {
-        data.id = crypto.randomUUID();
-        result = await db.collection('matches').insertOne(data);
-    } else {
-        // insert data into MongoDB
-        result = await db.collection('matches').updateOne({ id: data.id }, { $set: data }, { upsert: true });
+export const setMatchWinner = async (data) => {
+
+    var result = await db.collection('matches').updateOne({ id: data.id, sport: data.sport, event: data.event }, { $set: { winner: data.winner, status: 'completed' } });
+    console.log('setMatchWinner', { result, data });
+        
+    console.log('setMatchWinner, update next match');
+    // push winner to the next round match
+    var nextMatch = nextMatchForWinner['' + data.match];
+    var filter = { event: data.event, sport: data.sport, id: 'match' + nextMatch };
+    var winner_result = await db.collection('matches').updateOne({ $and: [ filter ] }, { $set: { [!data.preliminary && data.match % 2 == 0 ? 'team2' : 'team1']: data.winner } });
+    console.log('setMatchWinner, update next match result', { filter, winner_result, set: !data.preliminary && data.match % 2 == 0 ? 'team2' : 'team1', data });
+
+    // the loser in round 4 plays match 31 (for 3rd or 4th place)
+    if (data.match === 29 || data.match === 30) {
+
+        console.log('Match 29 nebo 30', { data });
+        let result = await db.collection('matches').updateOne({ $and: [ { event: data.event, sport: data.sport, match: 31 } ] }, { $set: { [data.match % 2 == 0 ? 'team2' : 'team1']: data.team1 === data.winner ? data.team2 : data.team1 } });
+        let result_match = await db.collection('matches').find({ $and: [ { event: data.event, sport: data.sport, match: 31 } ] }).toArray();
+        console.log('UPDATING 3-4', result, result_match);
+
     }
 
-    if (data.winner) {
-        console.log('upsertMatch, update next match', { result, data });
-        var nextMatch = nextMatchForWinner[data.match];
-        var filter = { event: data.event, sport: data.sport, match: nextMatch };
-        var winner_result = await db.collection('matches').updateOne({ $and: [ filter ] }, { $set: { [data.match % 2 == 0 ? 'team2' : 'team1']: data.winner } });
-        console.log('upsertMatch, update next match result', { filter, winner_result });
-    }
-    // the loser in round 4 plays match 31
-    if (data.match === 29 || data.match === 30) {
-        console.log('Match 29 nebo 30', { data });
-        var result = await db.collection('matches').updateOne({ $and: [ { event: data.event, sport: data.sport, match: 31 } ] }, { $set: { [data.match % 2 == 0 ? 'team2' : 'team1']: data.team1 === data.winner ? data.team2 : data.team1 } });
-        var result_match = await db.collection('matches').find({ $and: [ { event: data.event, sport: data.sport, match: 31 } ] }).toArray();
-        console.log('UPDATING 3-4', result, result_match);
-    }
+    // return JSON response
+    delete data._id;
+    return result;
+}
+
+export const upsertMatch = async (data) => {
+    var result = await db.collection('matches').updateOne({ id: data.id }, { $set: data }, { upsert: true });
+    console.log('upsertMatch', { result, data });
+
     // return JSON response
     delete data._id;
     return result;

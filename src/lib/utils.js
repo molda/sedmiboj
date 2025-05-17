@@ -2,6 +2,7 @@ var imported = {};
 export function loadScript(src) {
     if (imported[src])
         return Promise.resolve();
+    
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = src;
@@ -12,6 +13,7 @@ export function loadScript(src) {
             imported[src] = true;
             resolve(script);
         });
+
         script.addEventListener('error', () => reject(script));
     });
 }
