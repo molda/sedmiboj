@@ -4,11 +4,11 @@ const db = getDB();
 export const queryRankings = async (filter = {}, opt = { orderby: 'wins' }) => {
     const matches = await db.collection('matches').find(filter).project({ _id: 0 }).toArray();
     const teams = await db.collection('teams').find(filter).project({ _id: 0 }).toArray();
-    //console.log('queryRankings', { filter });
+    console.log('queryRankings', { filter });
 
     var data = createStructure(teams);
     for (let i = 0; i < data.length; i++) {
-        data[i] = fillPoints(data[i], matches)
+        data[i] = fillPoints(data[i], matches.filter(m => m.team1 === data[i].id || m.team2 === data[i].id));
     }
     if (!data) {
         return { rankings: [] };
@@ -34,7 +34,13 @@ export const queryRankings = async (filter = {}, opt = { orderby: 'wins' }) => {
 }
 
 //var points = [0, 2, 3, 4, 5, 7, 9]; // null pro posunutí indexu, 0 --> 0 bodů za boj o 3 místo
-
+// Za vyhru dostane tým body podle kola, ve kterém vyhrál.
+//  první kolo 2
+//  druhé kolo 1
+//  třetí kolo 1
+//  čtvrté kolo 2
+//  páté kolo (3-4 místo) 0 a 1
+//  šesté kolo (1-2 místo) 1 a 3
 function createStructure(teams) {
     var tmp = [];
     teams.forEach(t => {
@@ -45,68 +51,54 @@ function createStructure(teams) {
 
 // add 1 for each won match
 function fillPoints(team, matches) {
-    var active = matches.filter(m => (m.team1 === team.id || m.team2 === team.id) && m.status === 'active');
-    var teamMatches = matches.filter(m => (m.team1 === team.id || m.team2 === team.id) && m.status === 'closed');
-    console.log('fillPoints', team.id, teamMatches);
+    var active = matches.filter(m => m.status === 'active');
+    var wonMatches = matches.filter(m => m.status === 'closed' && m.winner === team.id && m.round < 5);
+    var finalMatches = matches.filter(m => m.status === 'closed' && m.round >= 5);
     
-    teamMatches.forEach(match => {
-        // tým není vítěz takže dostane body za zápas v předchozím kole
-        var iswinner = match.winner === team.id;
-        if (match.round === 6) {
-            if (iswinner) {
-                team.scores[match.sport] = 9;
-                team.total += 9;
-                team.wins += 1;
-            } else {
-                team.scores[match.sport] = 7;
-                team.total += 7;
-            }
-            return;
-        }
+    if (team.id === 'team34')
+        console.log('fillPoints', team.id, active, matches);
 
-        if (match.round === 5) {
-            if (iswinner) {
-                team.scores[match.sport] = 5;
-                team.total += 5;
-                team.wins += 1;
-            } else {
-                team.scores[match.sport] = 4;
-                team.total += 4;
-            }
-            return;
-        }
-        
-        if (match.round === 4) {
-            if (!iswinner) {
-                //team.scores[match.sport] = 3;
-                //team.total += 3;
-            } else
-                team.wins += 1;
-            return;
-        }
-
-        if (match.round === 3) {
-            if (!iswinner) {
-                team.scores[match.sport] = 3;
-                team.total += 3;
-            } else
-                team.wins += 1;
-            return;
-        }
-
-        if (match.round === 2) {
-            if (!iswinner){
-                team.scores[match.sport] = 2;
+    wonMatches.forEach(match => {
+        switch (match.round) {
+            case 1:
+                team.scores[match.sport] += 2;
                 team.total += 2;
-            } else
                 team.wins += 1;
-            return;
+                break;
+            case 2:
+                team.scores[match.sport] += 1;
+                team.total += 1;
+                team.wins += 1;
+                break;
+            case 3:
+                team.scores[match.sport] += 1;
+                team.total += 1;
+                team.wins += 1;
+                break;
+            case 4:
+                team.scores[match.sport] += 3;
+                team.total += 3;
+                team.wins += 1;
+                break;
         }
-
-        // round 1
-        if (iswinner)
-            team.wins += 1;
     });
+
+    finalMatches.forEach(match => {
+        if (match.match === 31) {
+            if (match.winner === team.id) {
+                team.scores[match.sport] += 1;
+                team.total += 1;
+                team.wins += 1;
+            }
+        } else if (match.match === 32) {	
+            if (match.winner === team.id) {
+                team.scores[match.sport] += 2;
+                team.total += 2;
+                team.wins += 1;
+            }
+        }
+    });
+    
     if (active.length) {
         //console.log(team.id, 'active', active[0]);
         team.active = active[0].sport; // team právě hraje
@@ -114,6 +106,6 @@ function fillPoints(team, matches) {
 
     //console.log('Team wins', team.wins);
 
-    console.log('Team', team.id, team.scores);
+    //console.log('Team', team.id, team.scores);
     return team;
 }

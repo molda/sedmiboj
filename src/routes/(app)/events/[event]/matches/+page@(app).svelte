@@ -54,7 +54,7 @@
         let closed = false;
         return function() {
             closed = !closed;
-            matches = data.matches.filter(m => closed ? m.status === 'closed' : true);
+            matches = data.matches.filter(m => closed ? m.status !== 'closed' : true);
             //console.log('MATCHES', matches);
         }
     }

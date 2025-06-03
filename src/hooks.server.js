@@ -47,7 +47,7 @@ async function authorizationHandle({ event, resolve }) {
     if (event.url.pathname.startsWith('/api') && (event.request.method !== 'OPTIONS' && event.request.method !== 'GET' && event.request.method !== 'HEAD')) {
         const session = await event.locals.auth();
 
-        console.log('[hooks.server.js] authorizationHandle', event);
+        //console.log('[hooks.server.js] authorizationHandle', event);
 
         if (!session) {
             // If the user is not authenticated, return a 401 Unauthorized response

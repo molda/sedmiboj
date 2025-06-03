@@ -114,13 +114,12 @@ export const initMatches = async (event) => {
 
 export const setMatchWinner = async (data) => {
 
-    var result = await db.collection('matches').updateOne({ id: data.id, sport: data.sport, event: data.event }, { $set: { winner: data.winner, status: 'completed' } });
+    var result = await db.collection('matches').updateOne({ id: data.id, sport: data.sport, event: data.event }, { $set: { winner: data.winner, status: 'closed' } });
     console.log('setMatchWinner', { result, data });
         
-    console.log('setMatchWinner, update next match');
     // push winner to the next round match
     var nextMatch = nextMatchForWinner['' + data.match];
-    var filter = { event: data.event, sport: data.sport, id: 'match' + nextMatch };
+    var filter = { event: data.event, sport: data.sport, id: data.sport + '_match_' + nextMatch };
     var winner_result = await db.collection('matches').updateOne({ $and: [ filter ] }, { $set: { [!data.preliminary && data.match % 2 == 0 ? 'team2' : 'team1']: data.winner } });
     console.log('setMatchWinner, update next match result', { filter, winner_result, set: !data.preliminary && data.match % 2 == 0 ? 'team2' : 'team1', data });
 

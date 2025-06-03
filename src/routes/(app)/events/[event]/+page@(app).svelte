@@ -30,11 +30,11 @@
             return setTimeout(initMap, 500);
 
         var map = new google.maps.Map(document.getElementById("googleMap"), {
-            center: new google.maps.LatLng(50.361005, 16.0861051),
+            center: new google.maps.LatLng(50.36116959271076, 16.087060274345475), 
             zoom: 12
         });
         var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(50.361005, 16.0861051),
+            position: new google.maps.LatLng(50.36116959271076, 16.087060274345475),
             map: map
         });
         console.log('map loaded');
@@ -58,6 +58,13 @@
             <p class="text-right text-lg">Těší se na Vás <b>{event.organizer}</b></p>
         </div>
     </div>
+    <hr class="max-w-screen-lg mx-auto mb-10 border-gray-300">
+    <div class="max-w-screen-lg mx-auto mb-10">
+        <h1 class="text-2xl font-bold text-gray-600 mb-8 flex items-center justify-between">
+            <div><i class="fa-solid fa-folder mr-2"></i>Soubory</div>
+            <div><button class="inline-flex justify-center items-center rounded-lg text-sm font-semibold h-10 py px-4 bg-primary-700 text-white hover:bg-primary-600 shadow-2xl disabled:opacity-50 disabled:hover:bg-primary-700"><i class="fa-solid fa-upload mr-2"></i>Nahrát</button></div>
+        </h1>
+        </div>
     <div class="max-w-screen-lg mx-auto mb-10">
         <h1 class="text-2xl font-bold text-gray-600 mb-8"><i class="fa-solid fa-map-location-dot mr-2"></i>Kudy k nám</h1>
         <div class="max-w-screen-lg h-80 rounded-lg shadow-lg bg-white" id="googleMap">
@@ -66,8 +73,9 @@
     </div>
     <div class="max-w-screen-lg mx-auto">
         <h1 class="text-2xl font-bold text-gray-600 mb-8"><i class="fa-solid fa-photo-film mr-2"></i>Fotky</h1>
-        <div class="max-w-screen-lg rounded-lg shadow-lg bg-white p-2" id="googleMap">
-            <Gallery images={photos} galleryID="event_gallery"></Gallery>
+        <div class="max-w-screen-lg rounded-lg shadow-lg bg-white p-2">
+            <!-- <Gallery images={photos} galleryID="event_gallery"></Gallery> -->
+             <h2 class="m-8">Připravujeme ...</h2>
         </div>
     </div>
 </div>

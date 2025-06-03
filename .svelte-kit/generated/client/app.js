@@ -13,7 +13,8 @@ export const nodes = [
 	() => import('./nodes/9'),
 	() => import('./nodes/10'),
 	() => import('./nodes/11'),
-	() => import('./nodes/12')
+	() => import('./nodes/12'),
+	() => import('./nodes/13')
 ];
 
 export const server_loads = [0,2];
@@ -22,13 +23,14 @@ export const dictionary = {
 		"/": [~3],
 		"/(app)/events/[event]": [~4,[2]],
 		"/(app)/events/[event]/matches": [~6,[2]],
-		"/(app)/events/[event]/rankings": [~7,[2]],
-		"/(app)/events/[event]/settings": [~8,[2]],
-		"/(app)/events/[event]/teams": [~9,[2]],
-		"/(app)/events/[event]/trees": [~10,[2]],
+		"/(app)/events/[event]/overview": [7,[2]],
+		"/(app)/events/[event]/rankings": [~8,[2]],
+		"/(app)/events/[event]/settings": [~9,[2]],
+		"/(app)/events/[event]/teams": [~10,[2]],
+		"/(app)/events/[event]/trees": [~11,[2]],
 		"/(app)/events/[event]/[sport]": [5,[2]],
-		"/login": [11],
-		"/logout": [~12]
+		"/login": [12],
+		"/logout": [~13]
 	};
 
 export const hooks = {
